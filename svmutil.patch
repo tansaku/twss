@@ -1,0 +1,36 @@
+--- svmutil.py	2012-05-25 15:47:54.000000000 +0100
++++ svmutil-old.py	2012-01-15 15:14:27.000000000 +0000
+@@ -184,15 +184,11 @@
+ 	"""
+ 	predict_probability = 0
+ 	argv = options.split()
+-	quiet = False
+ 	i = 0
+ 	while i < len(argv):
+ 		if argv[i] == '-b':
+ 			i += 1
+ 			predict_probability = int(argv[i])
+-		elif argv[i] == '-q':
+-			i += 1
+-			quiet = True
+ 		else:
+ 			raise ValueError("Wrong options")
+ 		i+=1
+@@ -239,12 +235,11 @@
+ 
+ 	ACC, MSE, SCC = evaluations(y, pred_labels)
+ 	l = len(y)
+-	if not quiet:
+-		if svm_type in [EPSILON_SVR, NU_SVR]:
+-			print("Mean squared error = %g (regression)" % MSE)
+-			print("Squared correlation coefficient = %g (regression)" % SCC)
+-		else:
+-			print("Accuracy = %g%% (%d/%d) (classification)" % (ACC, int(l*ACC/100), l))
++	if svm_type in [EPSILON_SVR, NU_SVR]:
++		print("Mean squared error = %g (regression)" % MSE)
++		print("Squared correlation coefficient = %g (regression)" % SCC)
++	else:
++		print("Accuracy = %g%% (%d/%d) (classification)" % (ACC, int(l*ACC/100), l))
+ 
+ 	return pred_labels, (ACC, MSE, SCC), pred_values
+ 
