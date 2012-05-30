@@ -14,9 +14,9 @@ def twss(sentence,vocabList,model):
     p_label, p_acc, p_val = svm_predict([1], [x], model, '-b 1 -q')
     #print p_label, p_acc, p_val
     if p_label[0] == 1:
-        print "That's what she said!\n"
+        return "That's what she said!\n"
     else:
-        print random.choice(responses) +'\n'   
+        return random.choice(responses) +'\n'   
 
 class Usage(Exception):
     def __init__(self, msg):
@@ -38,7 +38,7 @@ def main(argv=None):
         model = svm_load_model("data/svm_model.pk")
         if not args:
             raise Usage('python twss.py "<your sentence>"')
-        twss(args[0],vocabList,model)
+        print twss(args[0],vocabList,model)
         
     except Usage, err:
         print >>sys.stderr, err.msg
