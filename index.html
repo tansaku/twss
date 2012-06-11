@@ -110,7 +110,7 @@ function conversationpatterns() {
       reply = convpatterns[i][index];
       soutput = uinput.replace(re, reply);
       soutput = initialCap(soutput);
-      dialog = dialog + "System: " + soutput +  '\r' + "\n";
+      dialog = dialog + "Zarquon: " + soutput +  '\r' + "\n";
       break;
   }
  }
@@ -167,7 +167,7 @@ var testdata = new Array (
 </head>
 
 <body onLoad="initScreen()">
-
+<center><h2>Zarquon Squelchmama III is based on the <a href="http://botshop.mifio.com/">JavaScript Chatterbot Workshop</a></h2></center>
 <form name="mainscreen" onkeypress = "if(event.keyCode == 13) {mainroutine();return false}">
 
 <table align="center">
@@ -176,12 +176,6 @@ var testdata = new Array (
 
 Dialog<br />
 <textarea name="BasicTextArea1" rows="15" cols="75"></textarea><br />
-
-System Output<br />
-<textarea name="BasicTextArea2" rows="2" cols="75"></textarea><br />
-
-Your Last Input<br />
-<textarea name="BasicTextArea3" rows="2" cols="75"></textarea><br />
 
 Type Here and Hit "Enter"<br />
 <textarea name="BasicTextArea4" rows="2" cols="75"></textarea><br />
@@ -193,7 +187,6 @@ Type Here and Hit "Enter"<br />
 <p align = "center">
 <input id=runbutton  class="button" type="button" value="Enter" name="run_button"  onClick="mainroutine()">
 <br /><br /><br /><br /><br /><br /><br /><br /><br />
-<input id=runbutton  class="button" type="button" value="Run Test" name="run_button"  onClick="runtest()">
 </p>
 </form>
 </body>
