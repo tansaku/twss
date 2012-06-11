@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 import twss
 import pickle
+import json
 from svmutil import *
 
 # import the logging library
@@ -18,4 +19,9 @@ def index(request):
   model = svm_load_model("data/svm_model.pk")
   #logger.error(request.GET['say'])
   #logger.error(model)
-  return HttpResponse(twss.twss(request.GET['say'],vocabList,model))
+  callback = request.GET.get('callback', '')
+  req = {}
+  req ['reply'] = twss.twss(request.GET['say'],vocabList,model)
+  response = json.dumps(req)
+  response = callback + '(' + response + ');'
+  return HttpResponse(response, mimetype="application/json")
