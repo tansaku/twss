@@ -35,6 +35,7 @@ td {
   }
 </style>
 
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript">
 
 //----Data Declarations----
@@ -89,31 +90,10 @@ dialog = ""
 
 //-----The Core Code------
 
-
 //-------
 function mainroutine() {
- uinput = document.mainscreen.BasicTextArea4.value;
- callTheJsonp(uinput);
-}
-
-
-function callTheJsonp(say)
-{
-	// the url of the script where we send the asynchronous call
-	var url = "http://tolysz.org/twss?say="+encodeURIComponent(say)+"&callback=parseRequest";
-	// create a new script element
-	var script = document.createElement('script');
-	// set the src attribute to that url
-	script.setAttribute('src', url);
-	// insert the script in out page
-	try
-	{
-		document.getElementsByTagName('head')[0].appendChild(script);
-	}
-	catch(an_exception)
-	{
-	    parseRequest("");
-	}
+ uinput=document.mainscreen.BasicTextArea4.value;
+ $.getJSON( "http://tolysz.org/twss/more?callback=?", { say: uinput}, parseRequest );
 }
 
 // this function should parse responses.. you can do anything you need..
@@ -129,17 +109,17 @@ function parseRequest(response)
 		alert('reply ' + response.reply);
 	}
 	dialog = dialog + "User: " + uinput +  '\r' + "\n";
-	if(response.reply == "That's what she said!\n")
+	if(response.val[0] < Math.random() ) // >
 		dialog = dialog + "Zarquon: " + response.reply +  '\r' + "\n";
 	else
-    	conversationpatterns()
+		conversationpatterns();
     dialog = dialog  +  '\r' + "\n";
-    updatescreen()
+    updatescreen();
 }
 
 //-------
 function conversationpatterns() {
-   for (i=0; i < convpatterns.length; i++) {
+   for (i=0; i < convpatterns.length; i++) { //>
     re = new RegExp (convpatterns[i][0], "i");
     if (re.test(uinput)) {
       len = convpatterns[i].length - 1;
@@ -161,10 +141,13 @@ function initScreen() {
 
 //-------
 function updatescreen() {
- document.mainscreen.BasicTextArea1.value = dialog
+ document.mainscreen.BasicTextArea4.value = "";
+ var dd = document.mainscreen.BasicTextArea1;
+ dd.value = dialog;
+ dd.scrollTop = dd.scrollHeight;
  //document.mainscreen.BasicTextArea2.value = soutput
  //document.mainscreen.BasicTextArea3.value = uinput
- document.mainscreen.BasicTextArea4.value = ""
+
 }
 
 //-------
@@ -192,7 +175,7 @@ var testdata = new Array (
 );
 
 
-          for (train=0; train < testdata.length; train++) {
+          for (train=0; train < testdata.length; train++) { //>
              document.mainscreen.BasicTextArea4.value = testdata[train];
              mainroutine()
 
@@ -225,6 +208,7 @@ Type Here and Hit "Enter"<br />
 <input id=runbutton  class="button" type="button" value="Enter" name="run_button"  onClick="mainroutine()">
 </p>
 </form>
+
 </body>
 </html>
 
