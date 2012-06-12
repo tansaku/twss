@@ -96,18 +96,11 @@ function mainroutine() {
  $.getJSON( "http://tolysz.org/twss/more?callback=?", { say: uinput}, parseRequest );
 }
 
-// this function should parse responses.. you can do anything you need..
-// you can make it general so it would parse all the responses the page receives based on a response field
+// handle the data coming back from the JSONP request
 function parseRequest(response)
 {
-	try // try to output this to the javascript console
-	{
-		console.log(response);
-	}
-	catch(an_exception) // alert for the users that don't have a javascript console
-	{
-		alert('reply ' + response.reply);
-	}
+	console.log(response);
+
 	dialog = dialog + "User: " + uinput +  '\r' + "\n";
 	if(response.val[0] < Math.random() ) // >
 		dialog = dialog + "Zarquon: " + response.reply +  '\r' + "\n";
