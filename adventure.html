@@ -3,57 +3,69 @@
 <title>Adventure</title>
 
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.21/themes/base/jquery-ui.css">
-<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="http://code.jquery.com/jquery-1.7.2.js"></script>
 <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.js"></script>
 
 <script>
+
+	//<![CDATA[ 
+
+	$.fn.teletype = function(opts){
+	    var $this = this,
+	        defaults = {
+	            animDelay: 50
+	        },
+	        settings = $.extend(defaults, opts);
+
+	    $.each(settings.text, function(i, letter){
+	        setTimeout(function(){
+	            $this.html($this.html() + letter);
+	        }, settings.animDelay * i);
+	    });
+	};
+
+	$(function(){
+	    $('#world').teletype({
+	        animDelay: 100,
+	        text: 'You see a wizard, a cat and a well.  There is a forest to the North and a cave to the East ...'
+	    });
+	});
+	
 	$(function() {
 		var availableTags = [
-			"ActionScript",
-			"AppleScript",
-			"Asp",
-			"BASIC",
-			"C",
-			"C++",
-			"Clojure",
-			"COBOL",
-			"ColdFusion",
-			"Erlang",
-			"Fortran",
-			"Groovy",
-			"Haskell",
-			"Java",
-			"JavaScript",
-			"Lisp",
-			"Perl",
-			"PHP",
-			"Python",
-			"Ruby",
-			"Scala",
-			"Scheme"
+			"Eat",
+			"Say",
+			"Throw",
+			"Throw Cat",
+			"Throw Cat in Well",
+			"Walk"
 		];
 		$( "#tags" ).autocomplete({
 			source: availableTags
 		});
 	});
+	
+	
+
+	//]]>  
+	
 	</script>
 
 </head>
 <body>
 	
-<div class="demo">
 
-<div class="ui-widget">
-	<label for="tags">Tags: </label>
-	<input id="tags">
+<div id="world">
+	
 </div>
 
-</div><!-- End demo -->
+<div class="demo">
+<div class="ui-widget">
+  <input name="tags" type="text" id="tags" value="" size="100">
+</div>
 
-<div class="demo-description" style="display: none; ">
-<p>The Autocomplete widgets provides suggestions while you type into the field. Here the suggestions are tags for programming languages, give "ja" (for Java or JavaScript) a try.</p>
-<p>The datasource is a simple JavaScript array, provided to the widget using the source-option.</p>
-</div><!-- End demo-description -->
+</div>
+
 
 </body>
 </html>
