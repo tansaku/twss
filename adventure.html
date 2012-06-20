@@ -6,6 +6,23 @@
 <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
 <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.js"></script>
 
+<style>
+.ui-autocomplete {
+	max-height: 100px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+	/* add padding to account for vertical scrollbar */
+	padding-right: 20px;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+	height: 100px;
+}
+</style>
+
 <script>
 
 	//<![CDATA[ 
@@ -26,7 +43,7 @@
 
 	$(function(){
 	    $('#world').teletype({
-	        animDelay: 100,
+	        animDelay: 35,
 	        text: 'You see a wizard, a cat and a well.  There is a forest to the North and a cave to the East ...'
 	    });
 	});
@@ -41,7 +58,14 @@
 			"Walk"
 		];
 		$( "#tags" ).autocomplete({
-			source: availableTags
+			source: function( req, resp ) {
+
+			        var filtered = $.grep( availableTags, function(el) {
+			            return el.indexOf( req.term ) == 0;                                    
+			        });
+
+			        resp( filtered );
+			    }
 		});
 	});
 	
@@ -65,6 +89,9 @@
 </div>
 
 </div>
+<hr />
+<div>Above is my attempt to implement the sketch below</div>
+<img src="images/interactive-fiction-dropdowns.jpg">
 
 
 </body>
