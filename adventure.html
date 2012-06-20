@@ -96,7 +96,7 @@
 					// element is elements in the array
 
 			        var filtered = $.grep( Object.keys(list), function(el) {
-			            return el.indexOf( lookup ) == 0;                                    
+			            return el.toLowerCase().indexOf( lookup.toLowerCase() ) == 0;                                    
 			        });
 			        // prepend each of filtered
 					filtered = $.each(filtered, function(index, value){
