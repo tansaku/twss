@@ -8,7 +8,7 @@
 
 <style>
 .ui-autocomplete {
-	max-height: 100px;
+	max-height: 60px;
 	overflow-y: auto;
 	/* prevent horizontal scrollbar */
 	overflow-x: hidden;
@@ -49,22 +49,62 @@
 	});
 	
 	$(function() {
-		var availableTags = [
+		var hashtable = {
+			"Go": {"North":null, "East":null},
+			"Throw": { 
+				"Wizard": {
+					"in": {"Well":null, "Cat":null} 
+				},
+				"Cat": {
+					"in": {"Well":null, "Wizard":null}
+				} 
+			},
+			"Say": {
+				"to": {
+					"Wizard": function(){return hashtable;}(), 
+					"Cat": function(){return hashtable;}()
+					}
+				}
+			};
+		var commands = [
 			"Eat",
 			"Say",
 			"Throw",
-			"Throw Cat",
-			"Throw Cat in Well",
+			"Go",
 			"Walk"
 		];
-		$( "#tags" ).autocomplete({
+		$( "#user-input" ).autocomplete({
 			source: function( req, resp ) {
+				    // if we have a complete word at the start, e.g. "Say" then we can 
+					// move to second layer of auto-suggest
+					var lookup = req.term;
+					// if there is a space then adjust lookup
+					var words = req.term.split(" ");
+					var list = hashtable;
+					var prepend = "";
+					if(words.length > 1)
+					{
+						for(i=0;i<words.length-1;i++)
+						{
+							list = list[words[i]];
+							prepend += words[i] + " ";
+						}
+						lookup = words[i];
+					}
+				
+                    // req.term is the contents of the input box, e.g. "Sa" or "Say t"
+					// element is elements in the array
 
-			        var filtered = $.grep( availableTags, function(el) {
-			            return el.indexOf( req.term ) == 0;                                    
+			        var filtered = $.grep( Object.keys(list), function(el) {
+			            return el.indexOf( lookup ) == 0;                                    
 			        });
+			        // prepend each of filtered
+					filtered = $.each(filtered, function(index, value){
+						filtered[index] = prepend + value;
+					});	
 
 			        resp( filtered );
+					// could fill in user-input with most likely match? (in-place autocomplete?)
 			    }
 		});
 	});
@@ -85,10 +125,14 @@
 
 <div class="demo">
 <div class="ui-widget">
-  <input name="tags" type="text" id="tags" value="" size="100">
+  <input name="tags" type="text" id="user-input" value="" size="100">
 </div>
 
 </div>
+<br />
+<br />
+<br />
+<br />
 <hr />
 <div>Above is my attempt to implement the sketch below</div>
 <img src="images/interactive-fiction-dropdowns.jpg">
