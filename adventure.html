@@ -61,11 +61,13 @@
 			},
 			"Say": {
 				"to": {
-					"Wizard": function(){return hashtable;}(), 
-					"Cat": function(){return hashtable;}()
+					"Wizard": null, 
+					"Cat": null
 					}
 				}
 			};
+			hashtable['Say']['to']['Wizard'] = hashtable;
+			hashtable['Say']['to']['Cat'] = hashtable;
 		var commands = [
 			"Eat",
 			"Say",
