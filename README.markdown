@@ -2,8 +2,9 @@
 
 A Python project inspired by the research of Chloé Kiddon and Yuriy Brun. [Paper available here.](http://www.cs.washington.edu/homes/brun/pubs/pubs/Kiddon11.pdf)
 
-## Getting started ##
+Thanks to [Henry Garner](https://github.com/henrygarner) for original coding initiative, to [Marcin Tolysz](https://github.com/tolysz) for awesome super-fast server modifications, and to Andrew Ng for the [ML course](http://coursera.org/ml)
 
+## Getting started ##o
 1. libsvm with python bindings required: [http://www.csie.ntu.edu.tw/~cjlin/libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm) 
 
 2. Apply patch to allow svm_predict to produce quiet output `cp svmutil.patch LIBSVM_HOME/python & cd LIBSVM_HOME/python & patch < svmutil.patch`
