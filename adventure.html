@@ -32,6 +32,7 @@
 	            animDelay: 50
 	        },
 	        settings = $.extend(defaults, opts);
+	        $this.html("");
 
 	    $.each(settings.text, function(i, letter){
 	        setTimeout(function(){
@@ -48,39 +49,37 @@
 	});
 	
 	$(function() {
+		var placeholder = {};
 		var hashtable = {
-			"Go": {"North":null, "East":null},
-			"Throw": { 
-				"Wizard": {
-					"in": {"Well":null, "Cat":null} 
+			"go": {"north":null, "east":null},
+			"drop": { // should this be "Drop" - or extract this and have a number of verbs work? look up in thesaurus?
+				"wizard": {
+					"in": {"well":null, "cat":null} 
 				},
-				"Cat": {
-					"in": {"Well":null, "Wizard":null}
+				"cat": {
+					"in": {"well":null, "wizard":null}
 				} 
 			},
-			"Say": {
+			"say": {
 				"to": {
-					"Wizard": null, 
-					"Cat": null
+					"wizard": placeholder, 
+					"cat": placeholder
 					}
 				}
 			};
-			hashtable['Say']['to']['Wizard'] = hashtable;
-			hashtable['Say']['to']['Cat'] = hashtable;
-		var commands = [
-			"Eat",
-			"Say",
-			"Throw",
-			"Go",
-			"Walk"
-		];
-		$( "#user-input" ).autocomplete({
+			// simply unpdating placeholder doesn't work because of closure
+			placeholder = hashtable;
+			// at the moment the following is required for recursive hashtable structure
+			hashtable['say']['to']['wizard'] = hashtable;
+			hashtable['say']['to']['cat'] = hashtable;
+			
+		$("#user-input").autocomplete({
 			source: function( req, resp ) {
 				    // if we have a complete word at the start, e.g. "Say" then we can 
 					// move to second layer of auto-suggest
-					var lookup = req.term;
+					var lookup = req.term.toLowerCase();
 					// if there is a space then adjust lookup
-					var words = req.term.split(" ");
+					var words = lookup.split(" ");
 					var list = hashtable;
 					var prepend = "";
 					if(words.length > 1)
@@ -97,7 +96,7 @@
 					// element is elements in the array
 
 			        var filtered = $.grep( Object.keys(list), function(el) {
-			            return el.toLowerCase().indexOf( lookup.toLowerCase() ) == 0;                                    
+			            return el.toLowerCase().indexOf( lookup ) == 0;                                    
 			        });
 			        // prepend each of filtered
 					filtered = $.each(filtered, function(index, value){
@@ -106,7 +105,36 @@
 
 			        resp( filtered );
 					// could fill in user-input with most likely match? (in-place autocomplete?)
+					// could be nice if when selecting element from list that space was added
+					// and the next suggestions appeared
 			    }
+		});
+		$('#submit').click(function() {
+			 //alert('submit clicked: '+ $("#user-input").val());
+			// would be cool here to convert input box to pure text of user action - then
+			// add new input boxes as necessary
+			// need to hide autocomplete box if it is being displayed
+			if($("#user-input").val().toLowerCase() == "say to wizard drop cat in well")
+			{
+			  	$('#result').teletype({
+			        animDelay: 35,
+			        text: 'You ask the wizard to drop the cat in the well.  He complies, and with a strangled meow the cat plummets down in the bucket.  Having purged the cat demons of fireflex 12 you become a knight of the external garter belt and live happily ever after ...'
+			    });
+			
+			}else{
+				$('#result').teletype({
+			        animDelay: 35,
+			        text: "Unfortunately nothing happens since the creator hasn't gotten around to implementing a response for that particular action yet ..."
+			    });
+			}
+		});
+		$("#user-input").keyup(function(event){
+		    if(event.keyCode == 13){
+		        $("#submit").click();
+		    }
+		    if(event.keyCode == 9){
+		        // want to select first item in list ...
+		    }
 		});
 	});
 	
@@ -122,12 +150,17 @@
 
 <div class="demo">
 <div class="ui-widget">
-  <input name="tags" type="text" id="user-input" value="" size="100">
+  <input id="user-input" name="tags" type="text" value="" size="100" />
+  <input id="submit" type="submit" value="Submit" />
 </div>
 
 </div>
+<br /> 
 <br />
-<br />
+<div id="result">
+	
+</div>
+
 <br />
 <br />
 <hr />
