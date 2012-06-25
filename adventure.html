@@ -29,7 +29,8 @@
 	$.fn.teletype = function(opts){
 	    var $this = this,
 	        defaults = {
-	            animDelay: 50
+	            animDelay: 50,
+				complete: function(){}
 	        },
 	        settings = $.extend(defaults, opts);
 	        $this.html("");
@@ -39,40 +40,21 @@
 	            $this.html($this.html() + letter);
 	        }, settings.animDelay * i);
 	    });
+		setTimeout(function(){ 
+			settings.complete(this);
+			}, settings.animDelay * settings.text.length);
 	};
 
 	$(function(){
 	    $('#world').teletype({
 	        animDelay: 35,
-	        text: 'You see a wizard, a cat and a well.  There is a forest to the North and a cave to the East ...'
+	        text: 'You see a wizard, a cat and a well.  There is a forest to the North and a cave to the East ...',
+			complete: function(){$("#ui-widget").toggle('slow');}
 	    });
+	
 	});
 	
-	$(function() {
-		var placeholder = {};
-		var hashtable = {
-			"go": {"north":null, "east":null},
-			"drop": { // should this be "Drop" - or extract this and have a number of verbs work? look up in thesaurus?
-				"wizard": {
-					"in": {"well":null, "cat":null} 
-				},
-				"cat": {
-					"in": {"well":null, "wizard":null}
-				} 
-			},
-			"say": {
-				"to": {
-					"wizard": placeholder, 
-					"cat": placeholder
-					}
-				}
-			};
-			// simply unpdating placeholder doesn't work because of closure
-			placeholder = hashtable;
-			// at the moment the following is required for recursive hashtable structure
-			hashtable['say']['to']['wizard'] = hashtable;
-			hashtable['say']['to']['cat'] = hashtable;
-			
+	function init(hashtable){
 		$("#user-input").autocomplete({
 			source: function( req, resp ) {
 				    // if we have a complete word at the start, e.g. "Say" then we can 
@@ -110,12 +92,16 @@
 			    }
 		});
 		$('#submit').click(function() {
-			 //alert('submit clicked: '+ $("#user-input").val());
+			//alert('submit clicked: '+ $("#user-input").val());
 			// would be cool here to convert input box to pure text of user action - then
-			// add new input boxes as necessary
+			// add new input boxes as necessary - could go to "The Hero Quoth:" Go North" "
 			// need to hide autocomplete box if it is being displayed
-			if($("#user-input").val().toLowerCase() == "say to wizard drop cat in well")
-			{
+			// may just disappear as side effect of changing input box to text?
+			var userInput = $("#user-input").val();
+			$('#ui-widget').replaceWith("<div style='color:#009900;padding:10px;'>"+userInput+'<br/></div>');
+			
+			if(userInput.toLowerCase() == "say to wizard drop cat in well")
+			{			
 			  	$('#result').teletype({
 			        animDelay: 35,
 			        text: 'You ask the wizard to drop the cat in the well.  He complies, and with a strangled meow the cat plummets down in the bucket.  Having purged the cat demons of fireflex 12 you become a knight of the external garter belt and live happily ever after ...'
@@ -124,8 +110,25 @@
 			}else{
 				$('#result').teletype({
 			        animDelay: 35,
-			        text: "Unfortunately nothing happens since the creator hasn't gotten around to implementing a response for that particular action yet ..."
-			    });
+			        text: "Unfortunately nothing happens since the creator hasn't gotten around to implementing a response for that particular action yet ...",
+					complete: function(){$('<div class="demo"> \
+						<div id="ui-widget" class="ui-widget" style="display: none;"> \
+						  <input id="user-input" name="tags" type="text" value="" size="100" /> \
+						  <input id="submit" type="submit" value="Submit" /> \
+						</div> \
+		 \
+						</div> \
+						<div id="result"> \
+ \
+						</div>').insertAfter('#result');
+						$('#result').replaceWith("<div>"+$('#result').text()+"</div>");
+						$("#ui-widget").toggle('slow');
+						init(hashtable);
+					}
+					// to make this new inputbox functional we'd have to re-associate 
+					// actions with it
+					
+			    });    
 			}
 		});
 		$("#user-input").keyup(function(event){
@@ -136,6 +139,33 @@
 		        // want to select first item in list ...
 		    }
 		});
+	};
+	
+	$(function() {
+		var placeholder = {};
+		var hashtable = {
+			"go": {"north":null, "east":null},
+			"drop": { // should this be "Drop" - or extract this and have a number of verbs work? look up in thesaurus?
+				"wizard": {
+					"in": {"well":null, "cat":null} 
+				},
+				"cat": {
+					"in": {"well":null, "wizard":null}
+				} 
+			},
+			"say": {
+				"to": {
+					"wizard": placeholder, 
+					"cat": placeholder
+					}
+				}
+			};
+		// simply unpdating placeholder doesn't work because of closure
+		placeholder = hashtable;
+		// at the moment the following is required for recursive hashtable structure
+		hashtable['say']['to']['wizard'] = hashtable;
+		hashtable['say']['to']['cat'] = hashtable;
+		init(hashtable);
 	});
 	
 	</script>
@@ -149,14 +179,12 @@
 </div>
 
 <div class="demo">
-<div class="ui-widget">
+<div id="ui-widget" class="ui-widget" style="display: none;">
   <input id="user-input" name="tags" type="text" value="" size="100" />
   <input id="submit" type="submit" value="Submit" />
 </div>
 
 </div>
-<br /> 
-<br />
 <div id="result">
 	
 </div>
