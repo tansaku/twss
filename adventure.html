@@ -54,7 +54,7 @@ unimplemented.text = "Unfortunately nothing happens since the creator hasn't got
 	    $('#world').teletype({
 	        animDelay: 35,
 	        text: 'You see a wizard, a cat and a well.  There is a forest to the North and a cave to the East ...',
-			complete: function(){$("#ui-widget").toggle('slow');}
+			complete: function(){$("#ui-widget").toggle('slow');$("#user-input").focus();}
 	    });
 	
 	});
