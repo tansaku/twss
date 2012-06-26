@@ -25,6 +25,11 @@
 </style>
 
 <script>
+var section = 0;
+
+var unimplemented = {}
+unimplemented.end = false;
+unimplemented.text = "Unfortunately nothing happens since the creator hasn't gotten around to implementing a response for that particular action yet ...";
 
 	$.fn.teletype = function(opts){
 	    var $this = this,
@@ -54,65 +59,78 @@
 	
 	});
 	
+	function lookup(sentence, list){
+		// check for sentence word by word in list (hashtable)
+		var words = sentence.split(" ");
+		var lookup = "";
+		var prepend = "";
+		if(words.length > 1)
+		{
+			for(i=0;i<words.length-1;i++)
+			{
+				list = list[words[i]];
+				prepend += words[i] + " ";
+			}
+			lookup = words[i];
+		}
+		return{lookup:lookup,list:list,prepend:prepend}	
+	};
+		
 	function init(hashtable){
 		$("#user-input").autocomplete({
 			source: function( req, resp ) {
-				    // if we have a complete word at the start, e.g. "Say" then we can 
-					// move to second layer of auto-suggest
-					var lookup = req.term.toLowerCase();
-					// if there is a space then adjust lookup
-					var words = lookup.split(" ");
-					var list = hashtable;
-					var prepend = "";
-					if(words.length > 1)
-					{
-						for(i=0;i<words.length-1;i++)
-						{
-							list = list[words[i]];
-							prepend += words[i] + " ";
-						}
-						lookup = words[i];
-					}
-				
-                    // req.term is the contents of the input box, e.g. "Sa" or "Say t"
-					// element is elements in the array
+				    // req.term is the contents of the input box, e.g. "Sa" or "Say t"
+					var sentence = req.term.toLowerCase();
+					var result = lookup(sentence, hashtable);
 
-			        var filtered = $.grep( Object.keys(list), function(el) {
-			            return el.toLowerCase().indexOf( lookup ) == 0;                                    
+			        var filtered = $.grep( Object.keys(result.list), function(el) {
+			            return el.toLowerCase().indexOf(result.lookup) == 0;                                    
 			        });
 			        // prepend each of filtered
 					filtered = $.each(filtered, function(index, value){
-						filtered[index] = prepend + value;
+						filtered[index] = result.prepend + value;
 					});	
 
 			        resp( filtered );
 					// could fill in user-input with most likely match? (in-place autocomplete?)
 					// could be nice if when selecting element from list that space was added
-					// and the next suggestions appeared
+					// and the next suggestions appeared - difficult to work out when user has
+					// finished typing?
 			    }
 		});
 		$('#submit').click(function() {
 			//alert('submit clicked: '+ $("#user-input").val());
 			// would be cool here to convert input box to pure text of user action - then
 			// add new input boxes as necessary - could go to "The Hero Quoth:" Go North" "
-			// need to hide autocomplete box if it is being displayed
-			// may just disappear as side effect of changing input box to text?
+
 			var userInput = $("#user-input").val();
-			$('#ui-widget').replaceWith("<div style='color:#009900;padding:10px;'>"+userInput+'<br/></div>');
+			// autocomplete box might not be displayed, but hide anyway
+			$('.ui-autocomplete').hide();
 			
-			if(userInput.toLowerCase() == "say to wizard drop cat in well")
+			$('#ui-widget').fadeOut("slow", function(){
+				var div = $("<div id='new"+ ++section + "'  style='color:#009900;padding:10px;'>"+userInput+'<br/></div>').hide();
+				$('#ui-widget').replaceWith(div);
+				$('#new'+ section).fadeIn("slow");
+			}); 
+			
+			var result = lookup(userInput.toLowerCase(), hashtable);
+			var consequence = result.list[result.lookup];
+			if(consequence == null){
+				consequence = unimplemented;
+			} 
+			if(consequence.end)
 			{			
 			  	$('#result').teletype({
 			        animDelay: 35,
-			        text: 'You ask the wizard to drop the cat in the well.  He complies, and with a strangled meow the cat plummets down in the bucket.  Having purged the cat demons of fireflex 12 you become a knight of the external garter belt and live happily ever after ...'
+			        text: consequence.text
 			    });
 			
 			}else{
 				$('#result').teletype({
 			        animDelay: 35,
-			        text: "Unfortunately nothing happens since the creator hasn't gotten around to implementing a response for that particular action yet ...",
+			        text: consequence.text,
 					complete: function(){$('<div class="demo"> \
-						<div id="ui-widget" class="ui-widget" style="display: none;"> \
+						<div id="ui-widget" class="ui-widget" style="display: none; padding:7px;"> \
 						  <input id="user-input" name="tags" type="text" value="" size="100" /> \
 						  <input id="submit" type="submit" value="Submit" /> \
 						</div> \
@@ -123,6 +141,7 @@
 						</div>').insertAfter('#result');
 						$('#result').replaceWith("<div>"+$('#result').text()+"</div>");
 						$("#ui-widget").toggle('slow');
+						$("#user-input").focus();
 						init(hashtable);
 					}
 					// to make this new inputbox functional we'd have to re-associate 
@@ -143,14 +162,44 @@
 	
 	$(function() {
 		var placeholder = {};
+		var forest = {}
+		forest.end = false;
+		forest.text = "You attempt to penetrate the terrible thicket of trees but are repelled.";
+		var cave = {}
+		cave.end = true;
+		cave.text = "You enter the glittering crystal caves of lieberkund and are set upon by a hoard of noxious goblins, that strip you of your possessions and leave you wandering the wilderness as a beggar ...";
+		var well = {}
+		well.end = true;
+		well.text = "You ask the wizard to drop the cat in the well.  He complies, and with a strangled meow the cat plummets down in the bucket.  Having purged the cat demons of fireflex 12 you become a knight of the external garter belt and live happily ever after ...";
+		var wizard = {}
+		wizard.end = true;
+		wizard.text = "You grapple with the wizard and the two of you teeter at the edge of the well.  The wizard goes over the edge but he grabs your leg and as you both plunge into the depths of the bottomless well something forces you to shout 'fly you fools' ...";
+		var cat = {}
+		cat.end = false;
+		cat.text = "You grapple with the cat who hisses and spits at you.  Eventually you retreat with several scratches.  There is no way you are grabbing this cat ...";
+		var wizardGoNorth = {}
+		wizardGoNorth.end = false;
+		wizardGoNorth.text = "The wizard arches his eyebrows and ignores you ...";
+		var wizardGoEast = {}
+		wizardGoEast.end = false;
+		wizardGoEast.text = "The wizard frowns and explains the dangers of the noxious goblins lurking in the caves ...";
+		var wizardDropSelfInWell = {}
+		wizardDropSelfInWell.end = false;
+		wizardDropSelfInWell.text = "The wizard explains he doesn't want to get his beard wet ...";
+		var wizardDropCatInSelf = {}
+		wizardDropCatInSelf.end = false;
+		wizardDropCatInSelf.text = "The wizard looks at you skeptically ...";
+		var catMeow = {}
+		catMeow.end = false;
+		catMeow.text = "The cat meows at you angrily ...";
 		var hashtable = {
-			"go": {"north":null, "east":null},
-			"drop": { // should this be "Drop" - or extract this and have a number of verbs work? look up in thesaurus?
+			"go": {"north":forest, "east":cave},
+			"drop": { // extract this and have a number of verbs work? look up in thesaurus?
 				"wizard": {
-					"in": {"well":null, "cat":null} 
+					"in": {"well":wizard, "cat":unimplemented} 
 				},
 				"cat": {
-					"in": {"well":null, "wizard":null}
+					"in": {"well":cat, "wizard":unimplemented}
 				} 
 			},
 			"say": {
@@ -162,16 +211,35 @@
 			};
 		// simply unpdating placeholder doesn't work because of closure
 		placeholder = hashtable;
+		
+		var wizardHash = jQuery.extend(true, {}, hashtable);
+		wizardHash['drop']['cat']['in']['well'] = well;
+		wizardHash['go']['north'] = wizardGoNorth;
+		wizardHash['go']['east'] = wizardGoEast;
+		wizardHash['drop']['wizard']['in']['well'] = wizardDropSelfInWell;
+		wizardHash['drop']['cat']['in']['wizard'] = wizardDropCatInSelf;
+		wizardHash['drop']['wizard']['in']['cat'] = wizardDropCatInSelf;
+		delete wizardHash.say
+		var catHash = jQuery.extend(true, {}, hashtable);
+		catHash['drop']['cat']['in']['well'] = catMeow;
+		catHash['go']['north'] = catMeow;
+		catHash['go']['east'] = catMeow;
+		catHash['drop']['wizard']['in']['well'] = catMeow;
+		catHash['drop']['cat']['in']['wizard'] = catMeow;
+		catHash['drop']['cat']['in']['well'] = catMeow;
+		catHash['drop']['wizard']['in']['cat'] = catMeow;
+		delete catHash.say
 		// at the moment the following is required for recursive hashtable structure
-		hashtable['say']['to']['wizard'] = hashtable;
-		hashtable['say']['to']['cat'] = hashtable;
+		hashtable['say']['to']['wizard'] = wizardHash;
+		hashtable['say']['to']['cat'] = catHash;		
+		// to enforce required loops, could clone hashtable for say and put action results in just there ...
 		init(hashtable);
 	});
 	
 	</script>
 
 </head>
-<body>
+<body style="padding:10px;">
 	
 
 <div id="world">
@@ -179,7 +247,7 @@
 </div>
 
 <div class="demo">
-<div id="ui-widget" class="ui-widget" style="display: none;">
+<div id="ui-widget" class="ui-widget" style="display: none; padding:7px;">
   <input id="user-input" name="tags" type="text" value="" size="100" />
   <input id="submit" type="submit" value="Submit" />
 </div>
