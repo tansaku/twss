@@ -114,10 +114,11 @@ unimplemented.text = "Unfortunately nothing happens since the creator hasn't got
 			}); 
 			
 			var result = lookup(userInput.toLowerCase(), hashtable);
-			var consequence = result.list[result.lookup];
-			if(consequence == null){
-				consequence = unimplemented;
-			} 
+			var consequence = unimplemented;
+			try{
+				consequence = result.list[result.lookup];
+				if(consequence == null) {consequence = unimplemented; }
+			} catch(err){}
 			if(consequence.end)
 			{			
 			  	$('#result').teletype({
