@@ -12,7 +12,7 @@ def twss(sentence,vocabList,model):
     x  = processSentence(sentence, vocabList)
     #print [x]
     p_label, p_acc, p_val = svm_predict([1], [x], model, '-b 1 -q')
-    #print p_label, p_acc, p_val
+    print p_label, p_acc, p_val
     if p_label[0] == 1:
         return "That's what she said!\n"
     else:
