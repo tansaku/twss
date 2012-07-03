@@ -5,6 +5,8 @@ from urllib import FancyURLopener
 import pdb
 import random
 import inflect
+import nltk
+from nltk.corpus import stopwords
 p = inflect.engine()
 
 CSCI3651_PREREQ = "CSCI 2911, CSCI 2912"
@@ -37,26 +39,48 @@ courseList = {"CSCI3651":["3651","game programming","game"],
               }  
 courses = courseList.keys() 
 
-def query(userSaid,conversationTitle=None,talking=None):
+DATABASE_NAME = "faq.db" 
+
+def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_NAME):
   '''natural language (hopefully) interface to store information and query it too'''
   statementCheck = process(userSaid)
   if statementCheck:
     return statementCheck
   userSplit = re.split(r'\W+',userSaid)
+  stoppedUserSplit = [w for w in userSplit if not w in stopwords.words('english')]
   #print userSplit
   #courseMatches = list(set(courses).intersection(set(userSplit))) # we could avoid splitting and be doing lookup on the sentence ...
-
-  courseMatch = None
+  
   lowerUserSaid = userSaid.lower()
-  for course in courses:
-    for synonym in courseList[course]:
-      if lowerUserSaid.find(synonym)>0:
-        courseMatch = course
-        break
+  courseMatch = None
+  aspect = None
+  tableMatch = None
+  bigrams = nltk.bigrams(stoppedUserSplit)
+  searchList = stoppedUserSplit + [bigram[0]+" "+bigram[1] for bigram in bigrams]
+  searchList = list(set(searchList))
+  searchList = [item for item in searchList if item != '']
+  #raise Exception(database_name)
+  for ident in searchList:
+    (table,result) = findTableContainingEntityWithIdent(ident, database_name, True)
+    if table:
+      column_names = grabColumnNames(table, database_name)
+      humanized_column_names = [col_name.replace('_',' ') for col_name in column_names]
+      for index,name in enumerate(humanized_column_names):
+        if lowerUserSaid.find(name)>0: # would love to get syn sets for names from wordnet  
+          #raise Exception(result[index])
+          return humanizedQuestion(ident,name,result[index])
+          break
+      return  "I'm not sure about that aspect of " + ident
+  myopener = MyOpener()
+  page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
+  page.read()
+  response = page.geturl()
+  #pdb.set_trace()
+  return "Does this help? "+ response
+
         
-  # this could allow us to answer things like "what's the textbook for this course", but we should check for 
-  # presence of aspect, and things like "this course" - really should get set up with sniffer or something
-  # to start managing all these things ...
+  # working with the conversations title might allow us to answer things like "what's the textbook for this course", 
+  # but we should check for presence of column name, and things like "this course" 
    
   #lowerConversationTitle = conversationTitle.lower()
   #if not courseMatch
@@ -64,21 +88,8 @@ def query(userSaid,conversationTitle=None,talking=None):
       #if lowerConversationTitle.find(synonym)>0:
         #courseMatch = course
         #break
-  
-  if courseMatch:
-    course = courseMatch
-    aspect = getAspect(set(userSplit))
-    if aspect:
-      return humanizedQuestion(course,aspect)
-    else:
-      return "I'm not sure about that aspect of " + course # could do hpu.edu site specific IFL search here
-  else:  
-    myopener = MyOpener()
-    page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
-    page.read()
-    response = page.geturl()
-    #pdb.set_trace()
-    return "Does this help? "+ response 
+
+    
               
 def getAspect(userSplitSet):
   for aspect, aspectSet in aspectList.items():
@@ -94,8 +105,10 @@ def question(course, aspect):
 def humanize(camelCase):
     return re.sub("([a-z])([A-Z])","\g<1> \g<2>",camelCase).lower()
 
-def humanizedQuestion(course, aspect):
-  return "The " + aspect + " for " + course + " is '" + question(course,aspect) + "'"
+def humanizedQuestion(course, aspect, answer="Unknown"):
+  if not answer: 
+    question(course,aspect)
+  return "The " + aspect + " for " + course + " is '" + answer + "'"
 
 def greetings():
   return random.choice(["sup, dog!","hello","hi there","dude","zaapp?"])
@@ -103,7 +116,7 @@ def greetings():
 class MyOpener(FancyURLopener):
   version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
 
-def process(statement,database_name = "faq.db"):
+def process(statement,database_name = DATABASE_NAME):
   ''' Allows us to create entities via statements like "There is a course CSCI4702 called Mobile Programming" 
       and modify entities with statements like "CSCI4702 has a start date of Jan 31st 2013"'''
   match = re.search(r'There is a (\w+) ((?:\s|\w+)+) called ((?:\s|\w+)+)',statement)
@@ -123,7 +136,7 @@ def process(statement,database_name = "faq.db"):
   if match:
     # need to search all tables
     ident = match.group(1)
-    table = findTableContainingEntityWithIdent(ident, database_name)
+    (table,result) = findTableContainingEntityWithIdent(ident, database_name)
     new_column = match.group(2)
     try:
       modifyTable(table, new_column, database_name)

@@ -43,24 +43,33 @@ def addEntity(name, hashtable, database_name):
   # We can also close the cursor if we are done with it
   c.close()
   
-def findTableContainingEntityWithIdent(ident, database_name):
+def findTableContainingEntityWithIdent(ident, database_name,flag=False):
   conn = sqlite3.connect(database_name)
   c = conn.cursor()
   c.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
   results = c.fetchall()
-  #raise Exception(result)
+  #if flag: raise Exception(database_name)
   for result in results:
     result = result[0]
     sql = "SELECT * FROM %s WHERE ident = '%s'" % (result,ident)
-    #raise Exception(str(c.execute("PRAGMA table_info(courses)").fetchall()) + sql)
+    #if flag:
+     # raise Exception(str(c.execute("PRAGMA table_info(courses)").fetchall()) + sql)
     c.execute(sql)
     fromThisTable = c.fetchone()
     if fromThisTable:
       c.close()
-      return result
+      return (result,fromThisTable)
   c.close()
-  return None
+  return (None,None)
   
+def grabColumnNames(table, database_name):
+  conn = sqlite3.connect(database_name)
+  c = conn.cursor()
+  sql = ("PRAGMA table_info(%s)"%scrub(table))
+  c.execute(sql)
+  results = c.fetchall()
+  return [result[1] for result in results]
+    
 def modifyTable(table, new_column, database_name):
   conn = sqlite3.connect(database_name)
   c = conn.cursor()
