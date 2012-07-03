@@ -74,7 +74,7 @@ def modifyTable(table, new_column, database_name):
   conn = sqlite3.connect(database_name)
   c = conn.cursor()
   new_column = new_column.replace(' ','_')
-  sql = "ALTER TABLE %s ADD COLUMN %s TEXT" % (table, new_column)
+  sql = "ALTER TABLE %s ADD COLUMN %s TEXT" % (table, new_column.lower())
   #raise Exception(sql)
   c.execute(sql)
   c.close()

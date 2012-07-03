@@ -24,12 +24,30 @@ class TestFaq(unittest.TestCase):
     #self.assertEqual(query("What's the start date of 3651"),"The start date for CSCI3651 is 'Tuesday, September 4th, 2012'")
     #self.assertEqual(query("So, what are you wearing?"),"Does this help? http://uk.gamespot.com/the-elder-scrolls-v-skyrim/forum/so-what-are-you-wearing-63261933/")
 
+  def testAnotherCreation(self):
+    ''' test we can create and modify arbitrary entities '''
+    process("There is a course CSCI3651 called Games Programming", TEST_DATABASE)
+    entity = grabEntity("courses", "CSCI3651", TEST_DATABASE)
+    self.assertEquals(entity['name'],"Games Programming")
+    self.assertEquals(entity['ident'],"CSCI3651")
+    process("CSCI3651 has a CRN of 3335", TEST_DATABASE)
+    process("CSCI3651 has a CRN of 3335", TEST_DATABASE)
+    entity = grabEntity("courses", "CSCI3651", TEST_DATABASE)
+    self.assertEquals(entity['crn'],"3335")
+    self.assertEquals(entity['name'],"Games Programming")
+    self.assertEquals(entity['ident'],"CSCI3651")
+    self.assertEquals(query("What's the start date of CSCI3651?",database_name = TEST_DATABASE),u"I'm not sure about that aspect of CSCI3651")
+    self.assertEquals(query("What's the CRN of CSCI3651?",database_name = TEST_DATABASE),u"The crn for CSCI3651 is '3335'")
+
+
+
   def testCreation(self):
     ''' test we can create and modify arbitrary entities '''
     process("There is a course CSCI4702 called Mobile Programming", TEST_DATABASE)
     entity = grabEntity("courses", "CSCI4702", TEST_DATABASE)
     self.assertEquals(entity['name'],"Mobile Programming")
     self.assertEquals(entity['ident'],"CSCI4702")
+    process("CSCI4702 has a start date of Jan 31st 2013", TEST_DATABASE)
     process("CSCI4702 has a start date of Jan 31st 2013", TEST_DATABASE)
     entity = grabEntity("courses", "CSCI4702", TEST_DATABASE)
     self.assertEquals(entity['start_date'],"Jan 31st 2013")
@@ -44,6 +62,7 @@ class TestFaq(unittest.TestCase):
     entity = grabEntity("professors", "Sam Joseph", TEST_DATABASE)
     self.assertEquals(entity['name'],"Sam")
     self.assertEquals(entity['ident'],"Sam Joseph")
+    process("Sam Joseph has a birth date of May 13th 1972", TEST_DATABASE)
     process("Sam Joseph has a birth date of May 13th 1972", TEST_DATABASE)
     entity = grabEntity("professors", "Sam Joseph", TEST_DATABASE)
     self.assertEquals(entity['birth_date'],"May 13th 1972")

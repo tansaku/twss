@@ -137,14 +137,16 @@ def process(statement,database_name = DATABASE_NAME):
     # need to search all tables
     ident = match.group(1)
     (table,result) = findTableContainingEntityWithIdent(ident, database_name)
-    new_column = match.group(2)
+    if table == None: 
+      return "Sorry, I don't know about " + ident
+    new_column = match.group(2).lower()
     try:
       modifyTable(table, new_column, database_name)
     except sqlite3.OperationalError as e:
-      if str(e) == "table "+table+" already has a column called "+new_column:
+      if str(e).startswith("duplicate column name: "):
         pass
       else:
-        raise(e)
+        raise e
     updateEntity(table, {"ident":ident,new_column:match.group(3)},database_name)
     return "OK"
   return None
