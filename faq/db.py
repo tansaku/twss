@@ -1,6 +1,8 @@
 import sqlite3
 import pdb
 
+# TODO this should be objectified, and have the database_name set once for some factory object
+
 def createTable(name, columns, database_name):
   conn = sqlite3.connect(database_name)
   c = conn.cursor()
@@ -12,11 +14,7 @@ def createTable(name, columns, database_name):
   sql = 'CREATE TABLE IF NOT EXISTS %s ( %s )' % (name, body)
   #raise Exception(sql)
   c.execute(sql) #[name,','.join(columns)]
-
-  # Save (commit) the changes
   conn.commit()
-
-  # We can also close the cursor if we are done with it
   c.close()
 
 def scrub(name):
@@ -52,6 +50,7 @@ def findTableContainingEntityWithIdent(ident, database_name,flag=False):
   for result in results:
     result = result[0]
     sql = "SELECT * FROM %s WHERE ident = '%s'" % (result,ident)
+    #raise Exception(sql)
     #if flag:
      # raise Exception(str(c.execute("PRAGMA table_info(courses)").fetchall()) + sql)
     c.execute(sql)

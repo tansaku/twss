@@ -43,7 +43,7 @@ DATABASE_NAME = "faq.db"
 
 def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_NAME):
   '''natural language (hopefully) interface to store information and query it too'''
-  statementCheck = process(userSaid)
+  statementCheck = process(userSaid,database_name)
   if statementCheck:
     return statementCheck
   userSplit = re.split(r'\W+',userSaid)
@@ -59,24 +59,28 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
   searchList = stoppedUserSplit + [bigram[0]+" "+bigram[1] for bigram in bigrams]
   searchList = list(set(searchList))
   searchList = [item for item in searchList if item != '']
-  #raise Exception(database_name)
+  
   for ident in searchList:
     (table,result) = findTableContainingEntityWithIdent(ident, database_name, True)
     if table:
       column_names = grabColumnNames(table, database_name)
       humanized_column_names = [col_name.replace('_',' ') for col_name in column_names]
       for index,name in enumerate(humanized_column_names):
+        #raise Exception(lowerUserSaid + "::" + str(humanized_column_names))
         if lowerUserSaid.find(name)>0: # would love to get syn sets for names from wordnet  
-          #raise Exception(result[index])
           return humanizedQuestion(ident,name,result[index])
           break
       return  "I'm not sure about that aspect of " + ident
-  myopener = MyOpener()
-  page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
-  page.read()
-  response = page.geturl()
+  final = "not sure what you mean ..."
+  '''
+  if database_name != "test.db":
+    myopener = MyOpener()
+    page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
+    page.read()
+    response = page.geturl()
+    final = "Does this help? "+ response '''
   #pdb.set_trace()
-  return "Does this help? "+ response
+  return final
 
         
   # working with the conversations title might allow us to answer things like "what's the textbook for this course", 
@@ -119,7 +123,7 @@ class MyOpener(FancyURLopener):
 def process(statement,database_name = DATABASE_NAME):
   ''' Allows us to create entities via statements like "There is a course CSCI4702 called Mobile Programming" 
       and modify entities with statements like "CSCI4702 has a start date of Jan 31st 2013"'''
-  match = re.search(r'There is a (\w+) ((?:\s|\w+)+) called ((?:\s|\w+)+)',statement)
+  match = re.search(r'There is a (\w+) ([\s\w]+) called ([\s\w]+)',statement)
   if match:
     table = p.plural(match.group(1))
     try:
@@ -131,8 +135,13 @@ def process(statement,database_name = DATABASE_NAME):
         raise(e)
     addEntity(table, {"ident":match.group(2),"name":match.group(3)},database_name)
     return "OK"
-  match = re.search(r'((?:\s|\w+)+?) has a ((?:\s|\w+)+) of ((?:\s|\w+)+)',statement)
+    
+  return processNewAspect(statement,database_name)
+  
+def processNewAspect(statement,database_name = DATABASE_NAME):
   #raise Exception(statement)
+  match = re.search(r'([\s\w]+?) has a ([\s\w]+) of ([\s\w]+)',statement)
+  #raise Exception(match.group(0))
   if match:
     # need to search all tables
     ident = match.group(1)
