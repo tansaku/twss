@@ -72,13 +72,14 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
           break
       return  "I'm not sure about that aspect of " + ident
   final = "not sure what you mean ..."
-  '''
+  
   if database_name != "test.db":
     myopener = MyOpener()
     page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
     page.read()
     response = page.geturl()
-    final = "Does this help? "+ response '''
+    final = "Does this help? "+ response
+  
   #pdb.set_trace()
   return final
 
@@ -123,7 +124,7 @@ class MyOpener(FancyURLopener):
 def process(statement,database_name = DATABASE_NAME):
   ''' Allows us to create entities via statements like "There is a course CSCI4702 called Mobile Programming" 
       and modify entities with statements like "CSCI4702 has a start date of Jan 31st 2013"'''
-  match = re.search(r'There is a (\w+) ([\s\w]+) called ([\s\w]+)',statement)
+  match = re.search(r'There is a (\w+) ([\s\w]+) called ([\s\w]+)\.?',statement)
   if match:
     table = p.plural(match.group(1))
     try:
@@ -140,7 +141,7 @@ def process(statement,database_name = DATABASE_NAME):
   
 def processNewAspect(statement,database_name = DATABASE_NAME):
   #raise Exception(statement)
-  match = re.search(r'([\s\w]+?) has a ([\s\w]+) of ([\s\w]+)',statement)
+  match = re.search(r'([\s\w]+?) has a ([\s\w]+) of ([\s\w:/\.]+)\.?',statement)
   #raise Exception(match.group(0))
   if match:
     # need to search all tables
