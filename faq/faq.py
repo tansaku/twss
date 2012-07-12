@@ -43,9 +43,10 @@ DATABASE_NAME = "faq.db"
 
 def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_NAME):
   '''natural language (hopefully) interface to store information and query it too'''
-  statementCheck = process(userSaid,database_name)
-  if statementCheck:
-    return statementCheck
+  if not userSaid.lower().startswith("what"):
+    statementCheck = process(userSaid,database_name)
+    if statementCheck:
+      return statementCheck
   userSplit = re.split(r'\W+',userSaid)
   stoppedUserSplit = [w for w in userSplit if not w in stopwords.words('english')]
   #print userSplit
@@ -67,10 +68,12 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
       humanized_column_names = [col_name.replace('_',' ') for col_name in column_names]
       for index,name in enumerate(humanized_column_names):
         #raise Exception(lowerUserSaid + "::" + str(humanized_column_names))
-        if lowerUserSaid.find(name)>0: # would love to get syn sets for names from wordnet  
+        if lowerUserSaid.find(name)>0: # would love to get syn sets for names from wordnet 
+          if result[index] == None:
+            break
           return humanizedQuestion(ident,name,result[index])
           break
-      return  "I'm not sure about that aspect of " + ident
+      return  allIKnow(table, ident, result, humanized_column_names)#"I'm not sure about that aspect of " + ident # here we could return what we know wbout that thing
   final = "not sure what you mean ..."
   
   if database_name != "test.db":
@@ -94,7 +97,10 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
         #courseMatch = course
         #break
 
-    
+def allIKnow(table, ident, result, humanized_column_names):   
+  possessive = "his" if table == "people" else "its" # would be nice to switch on gender here, or is that something we could learn?
+  allIKnow = "All I know about %s is that %s " % (ident, possessive)
+  return allIKnow+(", and %s "%possessive).join([name + " is " + result[index] for index,name in enumerate(humanized_column_names)if name != "ident" and result[index] != None] )
               
 def getAspect(userSplitSet):
   for aspect, aspectSet in aspectList.items():
@@ -141,7 +147,7 @@ def process(statement,database_name = DATABASE_NAME):
   
 def processNewAspect(statement,database_name = DATABASE_NAME):
   #raise Exception(statement)
-  match = re.search(r'([\s\w]+?) has a ([\s\w]+) of ([\s\w:/\.]+)\.?',statement)
+  match = re.search(r"([\s\w]+?)(?:(?: has a)|(?:\'s)) ([\s\w]+) (?:(?:of)|(?:called)|(?:is(?: called)?)) ([\s\w:/\.]+)\.?",statement)
   #raise Exception(match.group(0))
   if match:
     # need to search all tables

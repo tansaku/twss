@@ -50,6 +50,7 @@ def findTableContainingEntityWithIdent(ident, database_name,flag=False):
   for result in results:
     result = result[0]
     sql = "SELECT * FROM %s WHERE ident = '%s'" % (result,ident)
+    # TODO would like case insensitive match here - not sure how to do that in sqlite
     #raise Exception(sql)
     #if flag:
      # raise Exception(str(c.execute("PRAGMA table_info(courses)").fetchall()) + sql)
