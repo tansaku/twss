@@ -68,7 +68,8 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
   aspect = None
   tableMatch = None
   bigrams = nltk.bigrams(stoppedUserSplit)
-  searchList = stoppedUserSplit + [bigram[0]+" "+bigram[1] for bigram in bigrams]
+  trigrams = nltk.trigrams(stoppedUserSplit)
+  searchList = stoppedUserSplit + [bigram[0]+" "+bigram[1] for bigram in bigrams]+ [trigram[0]+" "+trigram[1]+" "+trigram[2] for trigram in trigrams]
   searchList = list(set(searchList))
   searchList = [item for item in searchList if item != '']
   

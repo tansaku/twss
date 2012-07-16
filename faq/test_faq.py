@@ -79,6 +79,18 @@ class TestFaq(unittest.TestCase):
     # TODO self.sayAndCheck("do you know any games?","I know about The Graveyard")
     # this would require further work still?
   
+  def testCreateCourseraCourses(self):
+    self.sayAndCheckEntity("There is a Course Probabilistic Graphical Models called PGM", "OK", "courses", "Probabilistic Graphical Models", {"name":"PGM","ident":"Probabilistic Graphical Models"})
+    self.sayAndCheckEntity("There is a Course Machine Learning called ML", "OK", "courses", "Machine Learning", {"name":"ML","ident":"Machine Learning"})
+    self.sayAndCheckEntity("Probabilistic Graphical Models's instructor is Daphne Koller", "OK", "courses", "Probabilistic Graphical Models", {"instructor":"Daphne Koller"})
+    self.sayAndCheckEntity("Machine Learning's instructor is Andrew Ng", "OK", "courses", "Machine Learning", {"instructor":"Andrew Ng"})
+    self.sayAndCheck("Who is the instructor for Machine Learning?","The instructor for Machine Learning is 'Andrew Ng'")
+    self.sayAndCheck("Which instructor teaches Probabilistic Graphical Models?","The instructor for Probabilistic Graphical Models is 'Daphne Koller'")
+    # TODO self.sayAndCheck("do you know about an existential game?","All I know about The Graveyard is that its name is The Graveyard, and its url is http://store.steampowered.com/app/27020, and its type is existential")
+    # to fix this, after searching idents we'd need to search on types ...
+    # TODO self.sayAndCheck("do you know any games?","I know about The Graveyard")
+    # this would require further work still?
+
   def testCreatePerson(self):
     self.sayAndCheckEntity("There is a person Henry Garner called Henry", "OK", "people", "Henry Garner", {"name":"Henry","ident":"Henry Garner"})
     self.sayAndCheckEntity("Henry Garner has a favourite colour of red","OK","people", "Henry Garner", {"favourite_colour":"red"})
