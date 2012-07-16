@@ -22,8 +22,13 @@ class TestFaq(unittest.TestCase):
     
   def sayAndCheck(self,sentence, response, database = TEST_DATABASE):
     self.assertEquals(query(sentence, database_name = database), response) 
-  
-       
+
+  def testStrippingTag(self):
+    ''' test we can strip tag '''
+    self.sayAndCheckEntity("@bot There is a course CSCI3651 called Games Programming", "OK", "courses", "CSCI3651", {"name":"Games Programming","ident":"CSCI3651"})
+    self.sayAndCheckEntity("@chatbot There is a course CSCI3651 called Games Programming", "OK", "courses", "CSCI3651", {"name":"Games Programming","ident":"CSCI3651"})
+    self.sayAndCheckEntity("@hpuchatbot There is a course CSCI3651 called Games Programming", "OK", "courses", "CSCI3651", {"name":"Games Programming","ident":"CSCI3651"})
+   
   # these are all starting to look a lot like behavioural tests rather than unit tests
   # not sure if that's something we should be making changes for ...
   # would be nice to be able to specify expected behaviour precisely in terms

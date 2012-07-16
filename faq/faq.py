@@ -8,6 +8,7 @@ import inflect
 import nltk
 from nltk.corpus import stopwords
 p = inflect.engine()
+import time
 
 CSCI3651_PREREQ = "CSCI 2911, CSCI 2912"
 CSCI3651_TEXT = "Artificial Intelligence for Games"
@@ -43,6 +44,16 @@ DATABASE_NAME = "faq.db"
 
 def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_NAME):
   '''natural language (hopefully) interface to store information and query it too'''
+  userSaid = userSaid.strip()
+  raw = userSaid.lower()
+  if raw.startswith('@bot'):
+    userSaid = userSaid[len('@bot'):]
+  if raw.startswith('@chatbot'):
+    userSaid = userSaid[len('@chatbot'):]
+  if raw.startswith('@hpuchatbot'):
+    userSaid = userSaid[len('@hpuchatbot'):]
+
+  userSaid = userSaid.strip()
   if not userSaid.lower().startswith("what"):
     statementCheck = process(userSaid,database_name)
     if statementCheck:
@@ -80,6 +91,7 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
     myopener = MyOpener()
     page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
     page.read()
+    time.sleep(1)
     response = page.geturl()
     final = "Does this help? "+ response
   
