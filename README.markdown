@@ -6,6 +6,8 @@ Thanks to [Henry Garner](https://github.com/henrygarner) for original coding ini
 
 Part of the [Funniest Computer Ever Open Source Initiative](http://funniestcomputer.neurogrid.com)
 
+Note we now have some other chatbot related initiatives in the [faq](faq) and [worldmodel](worldmodel) directories.  Ultimately hoping these will all be integrated into a single coherent whole :-)
+
 ## Getting started
 1. libsvm with python bindings required: [http://www.csie.ntu.edu.tw/~cjlin/libsvm](http://www.csie.ntu.edu.tw/~cjlin/libsvm) 
 
