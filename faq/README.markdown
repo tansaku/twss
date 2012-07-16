@@ -1,6 +1,12 @@
 The faqbot is currently separate from the TWSS system, and provides a Natural Language interface to a SQL database
 
-Through it you can create new tables like so:
+To run from the command line:
+
+`python faq.py`
+
+For development run [sniffer](http://pypi.python.org/pypi/sniffer) in the faq directory
+
+Through the faqbot you can create new tables like so:
 
 "There is a Course Probabilistic Graphical Models called PGM"
 
@@ -17,4 +23,6 @@ The system can then respond to queries such as
 
 "Who is the instructor for Machine Learning?"
 "Which instructor teaches Probabilistic Graphical Models"
+
+When a sentence fails to match either an assertion or query about an object and it's properties faq bot will fall back on an I feel lucky google search
 
