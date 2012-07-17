@@ -30,7 +30,7 @@ When a sentence fails to match either an assertion or query about an object and 
 
 It turns out the Natural Language interfaces for databases are an old and distinguished topic:
 
-* [Androutsuopoulos et al (1995) Natural Language Interfaces to Databases – An Introduction. Journal of Natural Language Engineering, Cambridge University Press](http://arxiv.org/pdf/cmp-lg/9503016_
+* [Androutsuopoulos et al (1995) Natural Language Interfaces to Databases – An Introduction. Journal of Natural Language Engineering, Cambridge University Press](http://arxiv.org/pdf/cmp-lg/9503016]
 * [Popescu et al (2003) Towards a Theory of Natural Language Interfaces to Databases. In IUI ’03](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.65.1531&rep=rep1&type=pdf)
 
 Which are (or at least were) the 2nd and 3rd hits in this Google Scholar search:
