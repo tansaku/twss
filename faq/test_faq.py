@@ -22,13 +22,26 @@ class TestFaq(unittest.TestCase):
     
   def sayAndCheck(self,sentence, response, database = TEST_DATABASE):
     self.assertEquals(query(sentence, database_name = database), response) 
+    
+  def testActions(self):
+    ''' test we can handle actions '''
+    self.sayAndCheckEntity("There is an animal cat called Puss", "OK", "animals", "cat", {"name":"Puss","ident":"cat"})
+    self.sayAndCheckEntity("There is a person evil wizard called Sam", "OK", "people", "evil wizard", {"name":"Sam","ident":"evil wizard"})
+    self.sayAndCheckEntity("There is an action soak called get wet", "OK", "actions", "soak", {"name":"get wet","ident":"soak"})
+    self.sayAndCheckEntity("soak has a target of cat", "OK", "actions", "soak", {"name":"get wet","ident":"soak","target":"cat"})
+    self.sayAndCheckEntity("soak has an origin of evil wizard", "OK", "actions", "soak", {"name":"get wet","ident":"soak","target":"cat","origin":"evil wizard"})
+    self.sayAndCheckEntity("There is a reaction meow called Meow", "OK", "reactions", "meow", {"name":"Meow","ident":"meow"})
+    self.sayAndCheckEntity("meow has an origin of cat", "OK", "reactions", "meow", {"name":"Meow","ident":"meow", "origin":"cat"})
+    self.sayAndCheckEntity("meow has an action of soak", "OK", "reactions", "meow", {"name":"Meow","ident":"meow", "origin":"cat", "action":"soak"})
+
+    self.sayAndCheck("what happens if the evil wizard soaks cat?", "Puss says Meow")
 
   def testStrippingTag(self):
     ''' test we can strip tag '''
     self.sayAndCheckEntity("@bot There is a course CSCI3651 called Games Programming", "OK", "courses", "CSCI3651", {"name":"Games Programming","ident":"CSCI3651"})
     self.sayAndCheckEntity("@chatbot There is a course CSCI3651 called Games Programming", "OK", "courses", "CSCI3651", {"name":"Games Programming","ident":"CSCI3651"})
     self.sayAndCheckEntity("@hpuchatbot There is a course CSCI3651 called Games Programming", "OK", "courses", "CSCI3651", {"name":"Games Programming","ident":"CSCI3651"})
-   
+
   # these are all starting to look a lot like behavioural tests rather than unit tests
   # not sure if that's something we should be making changes for ...
   # would be nice to be able to specify expected behaviour precisely in terms
@@ -36,7 +49,7 @@ class TestFaq(unittest.TestCase):
   def testAnotherCreation(self):
     ''' test we can create and modify arbitrary entities '''
     self.sayAndCheckEntity("There is a course CSCI3651 called Games Programming", "OK", "courses", "CSCI3651", {"name":"Games Programming","ident":"CSCI3651"})
-    
+
     self.sayAndCheckEntity("CSCI3651 has a CRN of 3335", "OK", "courses", "CSCI3651", {"crn":"3335","name":"Games Programming","ident":"CSCI3651"})
     self.sayAndCheckEntity("CSCI3651 has a CRN of 3335", "OK", "courses", "CSCI3651", {"crn":"3335","name":"Games Programming","ident":"CSCI3651"})
 
@@ -47,26 +60,26 @@ class TestFaq(unittest.TestCase):
     self.sayAndCheckEntity("CSCI3651's textbook is called Artificial Intelligence for Games", "OK", "courses", "CSCI3651", {"crn":"3335","name":"Games Programming","ident":"CSCI3651", "textbook":"Artificial Intelligence for Games"})
     self.sayAndCheck("what is the textbook of CSCI3651", "The textbook for CSCI3651 is 'Artificial Intelligence for Games'")
     # this query above used to take an awful long time since we had regex with (\s|\w)+ which apparently sux...
-    
+
     # handling all the different possible ways of saying these things ... hmmm ....
-  
+
     # would love to have history in the command prompt as well as other arrow key features, but can get that from skype?
-    
+
     # testing that situation when we ask about an ident that doesn't exist yet ...
     self.sayAndCheck("CSCI9999 has a CRN of 9999", "Sorry, I don't know about CSCI9999")
 
     self.sayAndCheckEntity("CSCI3651 has a URL of https://sites.google.com/site/gameprogrammingfall2012/", "OK", "courses", "CSCI3651", {"url":"https://sites.google.com/site/gameprogrammingfall2012/"})
     self.sayAndCheck("what is the URL of CSCI3651", "The url for CSCI3651 is 'https://sites.google.com/site/gameprogrammingfall2012/'")
     # would really like to use wordnet to allow user to ask about "webpage", "homepage", "page" etc. for this attribute
-    
+
     # need something to test null entries
     self.sayAndCheck("There is a course CSCI3771 called Python", "OK")
     self.sayAndCheck("what is the enrollment for CSCI3771", "All I know about CSCI3771 is that its name is Python")
     self.sayAndCheck("what is the URL of CSCI3771", "All I know about CSCI3771 is that its name is Python")
- 
+
   # was also thinking to have something that listed all the London Stanford guys courses - something they could enter if I can
   # get this all live ...
-  
+
 
   def testCreateGame(self):
     self.sayAndCheckEntity("There is a game The Graveyard called The Graveyard", "OK", "games", "The Graveyard", {"name":"The Graveyard","ident":"The Graveyard"})

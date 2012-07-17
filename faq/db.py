@@ -92,6 +92,18 @@ def grabEntity(name, ident, database_name):
   result = c.fetchone()
   c.close()
   return result
+
+def queryTable(table_name, hashquery, database_name):
+  conn = sqlite3.connect(database_name)
+  conn.row_factory = sqlite3.Row
+  c = conn.cursor()
+  name = scrub(table_name)
+  query = " AND ".join([ scrub(key) + " = '" + scrubQuoted(value) + "'" for key, value in hashquery.items()])
+  sql = "SELECT * FROM %s WHERE %s" % (name,query)
+  c.execute(sql)
+  result = c.fetchone()
+  c.close()
+  return result
   
 def updateEntity(table, hashtable ,database_name):
   conn = sqlite3.connect(database_name)

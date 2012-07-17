@@ -9,6 +9,7 @@ import nltk
 from nltk.corpus import stopwords
 p = inflect.engine()
 import time
+import en
 
 CSCI3651_PREREQ = "CSCI 2911, CSCI 2912"
 CSCI3651_TEXT = "Artificial Intelligence for Games"
@@ -58,6 +59,8 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
     statementCheck = process(userSaid,database_name)
     if statementCheck:
       return statementCheck
+  if userSaid.lower().startswith("what happens"):
+    return processAction(userSaid,database_name)
   userSplit = re.split(r'\W+',userSaid)
   stoppedUserSplit = [w for w in userSplit if not w in stopwords.words('english')]
   #print userSplit
@@ -143,7 +146,7 @@ class MyOpener(FancyURLopener):
 def process(statement,database_name = DATABASE_NAME):
   ''' Allows us to create entities via statements like "There is a course CSCI4702 called Mobile Programming" 
       and modify entities with statements like "CSCI4702 has a start date of Jan 31st 2013"'''
-  match = re.search(r'There is a (\w+) ([\s\w]+) called ([\s\w]+)\.?',statement)
+  match = re.search(r'There is an? (\w+) ([\s\w]+) called ([\s\w]+)\.?',statement)
   if match:
     table = p.plural(match.group(1))
     try:
@@ -158,9 +161,28 @@ def process(statement,database_name = DATABASE_NAME):
     
   return processNewAspect(statement,database_name)
   
+  
+def processAction(statement,database_name = DATABASE_NAME):
+  #raise Exception(statement)
+  match = re.search(r"what happens (?:(?:if)|(?:when)) (?:the)? ([\s\w]+) ([\s\w]+?) ([\s\w]+)\??",statement)
+  #raise Exception(match.group(0))
+  if match:
+    # need to search action table for 
+    subj = match.group(1)
+    verb = match.group(2)
+    verb = en.verb.present(verb)
+    obj = match.group(3)
+    result = queryTable("actions",{"origin":subj,"ident":verb,"target":obj},database_name)
+    if result == None: 
+      return "Sorry, I don't what happens when " + subj + " " + verb + " " + obj
+    result = queryTable("reactions",{"origin":obj,"action":verb},database_name)
+    (table,thing) = findTableContainingEntityWithIdent(obj, database_name)
+  return thing[0] + " says " + result['name']
+
+  
 def processNewAspect(statement,database_name = DATABASE_NAME):
   #raise Exception(statement)
-  match = re.search(r"([\s\w]+?)(?:(?: has a)|(?:\'s)) ([\s\w]+) (?:(?:of)|(?:called)|(?:is(?: called)?)) ([\s\w:/\.]+)\.?",statement)
+  match = re.search(r"([\s\w]+?)(?:(?: has an?)|(?:\'s)) ([\s\w]+) (?:(?:of)|(?:called)|(?:is(?: called)?)) ([\s\w:/\.]+)\.?",statement)
   #raise Exception(match.group(0))
   if match:
     # need to search all tables
