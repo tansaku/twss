@@ -28,3 +28,17 @@ The system can then respond to queries such as
 
 When a sentence fails to match either an assertion or query about an object and it's properties faq bot will fall back on an I feel lucky google search
 
+It turns out the Natural Language interfaces for databases are an old and distinguished topic:
+
+* [Androutsuopoulos et al (1995) Natural Language Interfaces to Databases – An Introduction. Journal of Natural Language Engineering, Cambridge University Press](http://arxiv.org/pdf/cmp-lg/9503016_
+* [Popescu et al (2003) Towards a Theory of Natural Language Interfaces to Databases. In IUI ’03](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.65.1531&rep=rep1&type=pdf)
+
+Which are (or at least were) the 2nd and 3rd hits in this Google Scholar search:
+
+[http://scholar.google.co.uk/scholar?q=natural+language+interfaces+for+databases](http://scholar.google.co.uk/scholar?q=natural+language+interfaces+for+databases)
+
+There are also various patents in the area:
+
+* [http://www.google.com/patents/US4688195 (1987)](http://www.google.com/patents/US4688195)
+* [http://www.google.com/patents/US4931935 (1990)](http://www.google.com/patents/US4931935)
+
