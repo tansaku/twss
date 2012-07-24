@@ -1,6 +1,7 @@
 from faq import *
 import unittest
-from test_db import *
+import os
+from test_db import TEST_DATABASE
 
 class TestFaq(unittest.TestCase):
   def setUp(self):
@@ -91,6 +92,14 @@ class TestFaq(unittest.TestCase):
     # to fix this, after searching idents we'd need to search on types ...
     # TODO self.sayAndCheck("do you know any games?","I know about The Graveyard")
     # this would require further work still?
+
+  def testCreateGameEngine(self):
+    self.sayAndCheckEntity("There is a game engine Unity3D called Unity3D", "OK", "game_engines", "Unity3D", {"name":"Unity3D","ident":"Unity3D"})
+    self.sayAndCheckEntity("Unity3D has a URL of http://www.studica.com/unity", "OK", "games", "Unity3D", {"url":"http://www.studica.com/unity"})
+    self.sayAndCheckEntity("Unity3D has a type of integrated","OK","game_engines", "Unity3D", {"type":"integrated"})
+    self.sayAndCheckEntity("Unity3D has a type of 3D","OK","game_engines", "Unity3D", {"type":"3D"})
+    self.sayAndCheck("What type of game engine is Unity3D?","The type for Unity3D is '3D'")
+
   
   def testCreateCourseraCourses(self):
     self.sayAndCheckEntity("There is a Course Probabilistic Graphical Models called PGM", "OK", "courses", "Probabilistic Graphical Models", {"name":"PGM","ident":"Probabilistic Graphical Models"})
@@ -111,9 +120,9 @@ class TestFaq(unittest.TestCase):
     self.sayAndCheck("do you know about Henry Garner?","All I know about Henry Garner is that his name is Henry, and his favourite colour is teal")
 
   def testCreateCTO(self):
-    self.sayAndCheckEntity("There is a CTO Henry Garner called Henry", "OK", "CTOES", "Henry Garner", {"name":"Henry","ident":"Henry Garner"})
-    self.sayAndCheckEntity("Henry Garner has a favourite colour of red","OK","CTOES", "Henry Garner", {"favourite_colour":"red"})
-    self.sayAndCheckEntity("Henry Garner has a favourite colour of teal","OK","CTOES", "Henry Garner", {"favourite_colour":"teal"})
+    self.sayAndCheckEntity("There is a CTO Henry Garner called Henry", "OK", "CTOs", "Henry Garner", {"name":"Henry","ident":"Henry Garner"})
+    self.sayAndCheckEntity("Henry Garner has a favourite colour of red","OK","CTOs", "Henry Garner", {"favourite_colour":"red"})
+    self.sayAndCheckEntity("Henry Garner has a favourite colour of teal","OK","CTOs", "Henry Garner", {"favourite_colour":"teal"})
     self.sayAndCheck("do you know about Henry Garner?","All I know about Henry Garner is that its name is Henry, and its favourite colour is teal")
 
   def testCreation(self):

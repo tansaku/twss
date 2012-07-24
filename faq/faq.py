@@ -1,15 +1,13 @@
-from test_faq import *
 from db import *
 import re
 from urllib import FancyURLopener
 import pdb
 import random
-import inflect
 import nltk
 from nltk.corpus import stopwords
-p = inflect.engine()
 import time
-import en
+from pattern.en import conjugate
+from pattern.en import pluralize
 
 CSCI3651_PREREQ = "CSCI 2911, CSCI 2912"
 CSCI3651_TEXT = "Artificial Intelligence for Games"
@@ -145,10 +143,32 @@ class MyOpener(FancyURLopener):
 
 def process(statement,database_name = DATABASE_NAME):
   ''' Allows us to create entities via statements like "There is a course CSCI4702 called Mobile Programming" 
-      and modify entities with statements like "CSCI4702 has a start date of Jan 31st 2013"'''
-  match = re.search(r'There is an? (\w+) ([\s\w]+) called ([\s\w]+)\.?',statement)
+      and modify entities with statements like "CSCI4702 has a start date of Jan 31st 2013"
+      
+      already encountering a statement like "There is a game engine Unity3d" gives us trouble
+      seems like we need named entity recognition to be able to extract types like that ... or perhaps rely on capitalization
+      which doesn't really work for things like CTO as a category of items, hmm
+      
+      >>> sent = "There is a game engine Unreal Engine".split()
+      >>> print nltk.ne_chunk(nltk.pos_tag(sent))
+      '''
+  # this runs real fast, but it doesn't quite get the NN/NNP combination I hoped for from "There is a game engine Unity3D"
+  from pattern.en import parse, split
+  from pattern.search import search
+  s = parse(statement, relations=True, lemmata=True)
+  s = split(s)
+  search('There be DT (NN)+ (NNP)+', s)
+  # exploring parse options ...    
+  # first time this is run we get a 6 second slow down ...
+  #chunk = nltk.ne_chunk(nltk.pos_tag(statement.split()))
+  #if chunk[0][0].startswith("There"):
+  #  table = p.plural(findNoun(chunk).replace(' ','_'))
+  #  identity = findIdentity()  # need to split out some unit tests to handle all the cases here - maybe hit the NLTK ch10 - check for SQL INSERT grammar
+  #  name = findName()
+  #raise Exception(chunk)
+  match = re.search(r'There is an? ([\w]+) ([\s\w]+) called ([\s\w]+)\.?',statement)
   if match:
-    table = p.plural(match.group(1))
+    table = pluralize(match.group(1))
     try:
       createTable(table, ["ident"], database_name)
     except sqlite3.OperationalError as e:
@@ -170,7 +190,7 @@ def processAction(statement,database_name = DATABASE_NAME):
     # need to search action table for 
     subj = match.group(1)
     verb = match.group(2)
-    verb = en.verb.present(verb)
+    verb = conjugate(verb,tense='infinitive')
     obj = match.group(3)
     result = queryTable("actions",{"origin":subj,"ident":verb,"target":obj},database_name)
     if result == None: 
