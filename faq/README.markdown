@@ -1,6 +1,6 @@
 The faqbot is currently separate from the TWSS system, and provides a Natural Language interface to a SQL database
 
-You'll need [nltk](https://github.com/nltk/nltk) and the [linguistics library](http://nodebox.net/code/index.php/Linguistics#verb_conjugation) on your PYTHONPATH to run
+You'll need [nltk](https://github.com/nltk/nltk) and the [linguistics library](http://nodebox.net/code/index.php/Linguistics#verb_conjugation) and [inflect](http://pypi.python.org/pypi/inflect/) on your PYTHONPATH to run
 
 To run from the command line:
 
