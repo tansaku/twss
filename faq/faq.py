@@ -155,32 +155,40 @@ def process(statement,database_name = DATABASE_NAME):
   # this runs real fast, but it doesn't quite get the NN/NNP combination I hoped for from "There is a game engine Unity3D"
   from pattern.en import parse, split
   from pattern.search import search
-  s = parse(statement, relations=True, lemmata=True)
+  s = parse(statement, relations=True, lemmata=True, light=True) 
   s = split(s)
-  search('There be DT (NN)+ (NNP)+', s)
-  # exploring parse options ...    
-  # first time this is run we get a 6 second slow down ...
-  #chunk = nltk.ne_chunk(nltk.pos_tag(statement.split()))
-  #if chunk[0][0].startswith("There"):
-  #  table = p.plural(findNoun(chunk).replace(' ','_'))
-  #  identity = findIdentity()  # need to split out some unit tests to handle all the cases here - maybe hit the NLTK ch10 - check for SQL INSERT grammar
-  #  name = findName()
-  #raise Exception(chunk)
+  result = search('There be DT (NN)+ (DT) (RB) (JJ) (NNP)+ call (DT) (RB) (JJ) (NNPS|NNP)+', s)
+  if result:
+    try:
+      noun = search('(NN)+', s)[0].string
+      table = pluralize(noun.replace(' ','_'))
+      ident = search('(NNPS|NNP)+', s)[0].string
+      name = search('(NNPS|NNP)+', s)[1].string
+      return newTable(table,ident,name,database_name)
+    except:
+      return regexMatch(statement,database_name)
+  else:
+    return regexMatch(statement,database_name)
+  
+def regexMatch(statement,database_name = DATABASE_NAME):
   match = re.search(r'There is an? ([\w]+) ([\s\w]+) called ([\s\w]+)\.?',statement)
   if match:
     table = pluralize(match.group(1))
-    try:
-      createTable(table, ["ident"], database_name)
-    except sqlite3.OperationalError as e:
-      if str(e) == "table "+table+" already exists":
-        pass
-      else:
-        raise(e)
-    addEntity(table, {"ident":match.group(2),"name":match.group(3)},database_name)
-    return "OK"
-    
+    ident = match.group(2)
+    name = match.group(3)
+    return newTable(table,ident,name,database_name)
   return processNewAspect(statement,database_name)
   
+def newTable(table,ident,name,database_name = DATABASE_NAME):
+  try:
+    createTable(table, ["ident"], database_name)
+  except sqlite3.OperationalError as e:
+    if str(e) == "table "+table+" already exists":
+      pass
+    else:
+      raise(e)
+  addEntity(table, {"ident":ident,"name":name},database_name)
+  return "OK"
   
 def processAction(statement,database_name = DATABASE_NAME):
   #raise Exception(statement)

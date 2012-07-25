@@ -26,8 +26,8 @@ class TestFaq(unittest.TestCase):
     
   def testActions(self):
     ''' test we can handle actions '''
-    self.sayAndCheckEntity("There is an animal cat called Puss", "OK", "animals", "cat", {"name":"Puss","ident":"cat"})
     self.sayAndCheckEntity("There is a person evil wizard called Sam", "OK", "people", "evil wizard", {"name":"Sam","ident":"evil wizard"})
+    self.sayAndCheckEntity("There is an animal cat called Puss", "OK", "animals", "cat", {"name":"Puss","ident":"cat"})
     self.sayAndCheckEntity("There is an action soak called get wet", "OK", "actions", "soak", {"name":"get wet","ident":"soak"})
     self.sayAndCheckEntity("soak has a target of cat", "OK", "actions", "soak", {"name":"get wet","ident":"soak","target":"cat"})
     self.sayAndCheckEntity("soak has an origin of evil wizard", "OK", "actions", "soak", {"name":"get wet","ident":"soak","target":"cat","origin":"evil wizard"})
@@ -95,15 +95,15 @@ class TestFaq(unittest.TestCase):
 
   def testCreateGameEngine(self):
     self.sayAndCheckEntity("There is a game engine Unity3D called Unity3D", "OK", "game_engines", "Unity3D", {"name":"Unity3D","ident":"Unity3D"})
-    self.sayAndCheckEntity("Unity3D has a URL of http://www.studica.com/unity", "OK", "games", "Unity3D", {"url":"http://www.studica.com/unity"})
+    self.sayAndCheckEntity("Unity3D has a URL of http://www.studica.com/unity", "OK", "game_engines", "Unity3D", {"url":"http://www.studica.com/unity"})
     self.sayAndCheckEntity("Unity3D has a type of integrated","OK","game_engines", "Unity3D", {"type":"integrated"})
     self.sayAndCheckEntity("Unity3D has a type of 3D","OK","game_engines", "Unity3D", {"type":"3D"})
     self.sayAndCheck("What type of game engine is Unity3D?","The type for Unity3D is '3D'")
 
   
   def testCreateCourseraCourses(self):
-    self.sayAndCheckEntity("There is a Course Probabilistic Graphical Models called PGM", "OK", "courses", "Probabilistic Graphical Models", {"name":"PGM","ident":"Probabilistic Graphical Models"})
-    self.sayAndCheckEntity("There is a Course Machine Learning called ML", "OK", "courses", "Machine Learning", {"name":"ML","ident":"Machine Learning"})
+    self.sayAndCheckEntity("There is a course Probabilistic Graphical Models called PGM", "OK", "courses", "Probabilistic Graphical Models", {"name":"PGM","ident":"Probabilistic Graphical Models"})
+    self.sayAndCheckEntity("There is a course Machine Learning called ML", "OK", "courses", "Machine Learning", {"name":"ML","ident":"Machine Learning"})
     self.sayAndCheckEntity("Probabilistic Graphical Models's instructor is Daphne Koller", "OK", "courses", "Probabilistic Graphical Models", {"instructor":"Daphne Koller"})
     self.sayAndCheckEntity("Machine Learning's instructor is Andrew Ng", "OK", "courses", "Machine Learning", {"instructor":"Andrew Ng"})
     self.sayAndCheck("Who is the instructor for Machine Learning?","The instructor for Machine Learning is 'Andrew Ng'")

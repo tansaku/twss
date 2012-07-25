@@ -32,6 +32,7 @@ def addEntity(name, hashtable, database_name):
   name = scrub(name)
   # Insert a row of data
   sql = "INSERT INTO %s (%s) VALUES (%s)"% (name, ','.join(hashtable.keys()),', '.join(['"'+value+'"'for value in hashtable.values()]))
+  #raise Exception(sql)
   try:
     c.execute(sql)
   except sqlite3.OperationalError, e: 
