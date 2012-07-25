@@ -6,6 +6,16 @@ Thanks to [Henry Garner](https://github.com/henrygarner) for original coding ini
 
 Part of the [Funniest Computer Ever Open Source Initiative](http://funniestcomputer.neurogrid.com)
 
+This code supported Zarquon Squelchmama III in the [chatbotbattles](http://www.square-bear.co.uk/cbb/groupb.htm) contest.  We didn't come anywhere near close to winning (our coding was all a bit last minute) but we did get one TWSS in there:
+
+Judge: Hello Zarquon  
+Zarquon: Greetings.  
+Judge: How are you?  
+Zarquon: How do you suppose?  
+Judge: I suppose you are good but I don't know  
+Zarquon: That's what she said!  
+Judge: Hehe. Very funny
+
 Note we now have some other chatbot related initiatives in the [faq](faq) and [worldmodel](worldmodel) directories.  Ultimately hoping these will all be integrated into a single coherent whole :-)
 
 ## Getting started
