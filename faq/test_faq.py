@@ -24,6 +24,23 @@ class TestFaq(unittest.TestCase):
   def sayAndCheck(self,sentence, response, database = TEST_DATABASE):
     self.assertEquals(query(sentence, database_name = database), response) 
     
+  def testCreateGameEngine(self):
+    self.sayAndCheckEntity("There is a game engine Unreal Engine", "OK", "game_engines", "Unreal Engine", {"name":"Unreal Engine","ident":"Unreal Engine"})
+    self.sayAndCheckEntity("There is a game engine Unity3D called Unity3D", "OK", "game_engines", "Unity3D", {"name":"Unity3D","ident":"Unity3D"})
+    self.sayAndCheckEntity("Unity3D has a URL of http://www.studica.com/unity", "OK", "game_engines", "Unity3D", {"url":"http://www.studica.com/unity"})
+    self.sayAndCheckEntity("Unity3D has a type of integrated","OK","game_engines", "Unity3D", {"type":"integrated"})
+    self.sayAndCheckEntity("Unity3D has a type of 3D","OK","game_engines", "Unity3D", {"type":"3D"})
+    self.sayAndCheck("What type of game engine is Unity3D?","The type for Unity3D is '3D'")
+
+    #Crysis - said no to use in an online class
+    #Unity3d - http://www.studica.com/unity
+    #Source http://source.valvesoftware.com/sourcesdk/sourceu.php
+    #Unreal engine
+    #Game Maker
+    #Game Salad
+    #Scirra
+    #Torque 3d  
+    
   def testActions(self):
     ''' test we can handle actions '''
     self.sayAndCheckEntity("There is a person evil wizard called Sam", "OK", "people", "evil wizard", {"name":"Sam","ident":"evil wizard"})
@@ -92,13 +109,6 @@ class TestFaq(unittest.TestCase):
     # to fix this, after searching idents we'd need to search on types ...
     # TODO self.sayAndCheck("do you know any games?","I know about The Graveyard")
     # this would require further work still?
-
-  def testCreateGameEngine(self):
-    self.sayAndCheckEntity("There is a game engine Unity3D called Unity3D", "OK", "game_engines", "Unity3D", {"name":"Unity3D","ident":"Unity3D"})
-    self.sayAndCheckEntity("Unity3D has a URL of http://www.studica.com/unity", "OK", "game_engines", "Unity3D", {"url":"http://www.studica.com/unity"})
-    self.sayAndCheckEntity("Unity3D has a type of integrated","OK","game_engines", "Unity3D", {"type":"integrated"})
-    self.sayAndCheckEntity("Unity3D has a type of 3D","OK","game_engines", "Unity3D", {"type":"3D"})
-    self.sayAndCheck("What type of game engine is Unity3D?","The type for Unity3D is '3D'")
 
   
   def testCreateCourseraCourses(self):

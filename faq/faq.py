@@ -8,6 +8,8 @@ from nltk.corpus import stopwords
 import time
 from pattern.en import conjugate
 from pattern.en import pluralize
+from pattern.en import parse, split
+from pattern.search import search
 
 CSCI3651_PREREQ = "CSCI 2911, CSCI 2912"
 CSCI3651_TEXT = "Artificial Intelligence for Games"
@@ -153,20 +155,23 @@ def process(statement,database_name = DATABASE_NAME):
       >>> print nltk.ne_chunk(nltk.pos_tag(sent))
       '''
   # this runs real fast, but it doesn't quite get the NN/NNP combination I hoped for from "There is a game engine Unity3D"
-  from pattern.en import parse, split
-  from pattern.search import search
+  # although it does now with light=True setting, but now it doesn't get the NNP in "There is a game engine Source"
+
   s = parse(statement, relations=True, lemmata=True, light=True) 
   s = split(s)
-  result = search('There be DT (NN)+ (DT) (RB) (JJ) (NNP)+ call (DT) (RB) (JJ) (NNPS|NNP)+', s)
+
+  result = search('There be DT NN+ (DT) (RB) (JJ) NNP+ (call) (DT) (RB) (JJ) (NNPS|NNP)+', s)
   if result:
-    try:
+    #try:
       noun = search('(NN)+', s)[0].string
       table = pluralize(noun.replace(' ','_'))
-      ident = search('(NNPS|NNP)+', s)[0].string
-      name = search('(NNPS|NNP)+', s)[1].string
+      result = search('(NNPS|NNP)+', s) # at the moment I'm unclear here about pulling in adjectives etc ...
+      ident = result[0].string
+      name = result[1].string if len(result) > 1 else ident
+      #raise Exception(table+"; "+ident+"; "+name)
       return newTable(table,ident,name,database_name)
-    except:
-      return regexMatch(statement,database_name)
+    #except:
+      #return regexMatch(statement,database_name)
   else:
     return regexMatch(statement,database_name)
   
