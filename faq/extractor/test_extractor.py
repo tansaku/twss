@@ -16,6 +16,10 @@ class TestExtractor(unittest.TestCase):
     match = basicExtract('tasty cat food')
     self.assertNotEqual(len(match),0,"no match found")
 
+  def testBasicConstraintSequenceExtract(self):
+    match = basicConstraintSequenceExtract('tasty cat food')
+    self.assertNotEqual(len(match),0,"no match found")
+
   def testMyExtract(self):
     match = myExtract("There is a game engine")
     self.assertNotEqual(len(match),0,"no match found")
