@@ -1131,11 +1131,158 @@ class MyClass(GeneratedClass):
                                 <ActuatorList />
                             </Timeline>
                         </Box>
+                        <Box name="Hands" robot="" id="6" tooltip="NAO stiffens the motors of one or both of his hands so that he can open or close&#x0A;it/them. Then he relaxes the motors of his hand(s)." bitmap_expanded="1" plugin="" x="120" y="455">
+                            <bitmap>media/images/box/movement/move_arm.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        
+    def onLoad(self):
+        self.motion = ALProxy( "ALMotion" )
+        self.bIsRunning = False
+
+    def onUnload(self):
+        self.bIsRunning = False
+
+    def onInput_onStart(self):
+        if( self.bIsRunning ):
+            return
+        self.bIsRunning = True
+        try:
+            hands = []
+            if( self.getParameter("Side") in ["Left", "Both"] ):
+                hands.append( "LHand" )
+            if( self.getParameter("Side") in ["Right", "Both"] ):
+                hands.append( "RHand" )
+            ids = []
+            for hand in hands:
+                if( self.getParameter("Action") == "Open the hand" ):
+                    ids.append( self.motion.post.openHand(hand) )
+                else:
+                    ids.append( self.motion.post.closeHand(hand) )
+            for id in ids:
+                self.motion.wait( id, 0 )
+        finally:
+            self.bIsRunning = False
+            self.onDone() # activate output of the box]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" />
+                            <Parameter name="Side" inherits_from_parent="0" content_type="3" value="Right" default_value="Both" custom_choice="0" tooltip="Choose the hand to move or both of them." id="4">
+                                <Choice value="Both" />
+                                <Choice value="Left" />
+                                <Choice value="Right" />
+                            </Parameter>
+                            <Parameter name="Action" inherits_from_parent="0" content_type="3" value="Open the hand" default_value="Open the hand" custom_choice="0" tooltip="Action you want to make on NAO&apos;s hand." id="5">
+                                <Choice value="Open the hand" />
+                                <Choice value="Close the hand" />
+                            </Parameter>
+                        </Box>
+                        <Box name="Raise hand to forehead" robot="" id="8" tooltip="This box is empty (contains a single motion layer with no motor position&#x0A;defined in it) and should be used to create any animation you would like." bitmap_expanded="1" plugin="" x="384" y="457">
+                            <bitmap>media/images/box/movement/move.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[class MyClass(GeneratedClass):
+	def __init__(self):
+		GeneratedClass.__init__(self)
+
+	def onUnload(self):
+		#puts code for box cleanup here
+		""
+
+	def onInput_onStart(self):
+		#self.onStopped() # activate output of the box
+		""
+
+	def onInput_onStop(self):
+		""]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when Diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Animation starts when a signal is received on this input." id="2" />
+                            <Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Animation stops when a signal is received on this input." id="3" />
+                            <Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when animation is finished." id="4" />
+                            <Timeline fps="15" resources_acquisition="0" size="300" enable="1" start_frame="0" end_frame="-1" scale="10">
+                                <watches />
+                                <ActuatorList>
+                                    <ActuatorCurve name="value" actuator="RShoulderPitch" recordable="1" mute="0" alwaysVisible="0">
+                                        <Key frame="5" value="-22.2" />
+                                    </ActuatorCurve>
+                                    <ActuatorCurve name="value" actuator="RShoulderRoll" recordable="1" mute="0" alwaysVisible="0">
+                                        <Key frame="5" value="-0.5" />
+                                    </ActuatorCurve>
+                                    <ActuatorCurve name="value" actuator="RElbowYaw" recordable="1" mute="0" alwaysVisible="0">
+                                        <Key frame="5" value="39.2" />
+                                    </ActuatorCurve>
+                                    <ActuatorCurve name="value" actuator="RElbowRoll" recordable="1" mute="0" alwaysVisible="0">
+                                        <Key frame="5" value="83.8" />
+                                    </ActuatorCurve>
+                                </ActuatorList>
+                            </Timeline>
+                        </Box>
+                        <Box name="Hands" robot="" id="9" tooltip="NAO stiffens the motors of one or both of his hands so that he can open or close&#x0A;it/them. Then he relaxes the motors of his hand(s)." bitmap_expanded="1" plugin="" x="252" y="457">
+                            <bitmap>media/images/box/movement/move_arm.png</bitmap>
+                            <script language="4">
+                                <content>
+                                    <![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        
+    def onLoad(self):
+        self.motion = ALProxy( "ALMotion" )
+        self.bIsRunning = False
+
+    def onUnload(self):
+        self.bIsRunning = False
+
+    def onInput_onStart(self):
+        if( self.bIsRunning ):
+            return
+        self.bIsRunning = True
+        try:
+            hands = []
+            if( self.getParameter("Side") in ["Left", "Both"] ):
+                hands.append( "LHand" )
+            if( self.getParameter("Side") in ["Right", "Both"] ):
+                hands.append( "RHand" )
+            ids = []
+            for hand in hands:
+                if( self.getParameter("Action") == "Open the hand" ):
+                    ids.append( self.motion.post.openHand(hand) )
+                else:
+                    ids.append( self.motion.post.closeHand(hand) )
+            for id in ids:
+                self.motion.wait( id, 0 )
+        finally:
+            self.bIsRunning = False
+            self.onDone() # activate output of the box]]>
+</content>
+                            </script>
+                            <Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" />
+                            <Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" />
+                            <Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" />
+                            <Parameter name="Side" inherits_from_parent="0" content_type="3" value="Right" default_value="Both" custom_choice="0" tooltip="Choose the hand to move or both of them." id="4">
+                                <Choice value="Both" />
+                                <Choice value="Left" />
+                                <Choice value="Right" />
+                            </Parameter>
+                            <Parameter name="Action" inherits_from_parent="0" content_type="3" value="Close the hand" default_value="Open the hand" custom_choice="0" tooltip="Action you want to make on NAO&apos;s hand." id="5">
+                                <Choice value="Open the hand" />
+                                <Choice value="Close the hand" />
+                            </Parameter>
+                        </Box>
                         <Link inputowner="2" indexofinput="2" outputowner="1" indexofoutput="4" />
                         <Link inputowner="3" indexofinput="2" outputowner="2" indexofoutput="4" />
                         <Link inputowner="5" indexofinput="2" outputowner="4" indexofoutput="4" />
                         <Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" />
                         <Link inputowner="4" indexofinput="2" outputowner="0" indexofoutput="2" />
+                        <Link inputowner="9" indexofinput="2" outputowner="6" indexofoutput="3" />
+                        <Link inputowner="8" indexofinput="2" outputowner="9" indexofoutput="3" />
+                        <Link inputowner="6" indexofinput="2" outputowner="0" indexofoutput="2" />
                     </Diagram>
                 </BehaviorKeyframe>
             </BehaviorLayer>
