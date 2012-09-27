@@ -10,6 +10,7 @@ from pattern.en import conjugate
 from pattern.en import pluralize
 from pattern.en import parse, split
 from pattern.search import search
+from extractor.extractor import extract
 
 CSCI3651_PREREQ = "CSCI 2911, CSCI 2912"
 CSCI3651_TEXT = "Artificial Intelligence for Games"
@@ -77,7 +78,7 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
   searchList = [item for item in searchList if item != '']
   
   for ident in searchList:
-    (table,result) = findTableContainingEntityWithIdent(ident, database_name, True)
+    (table,result) = findTableContainingEntityWithIdentOrName(ident, database_name, True)
     if table:
       column_names = grabColumnNames(table, database_name)
       humanized_column_names = [col_name.replace('_',' ') for col_name in column_names]
@@ -92,12 +93,15 @@ def query(userSaid,conversationTitle=None,talking=None,database_name = DATABASE_
   final = "not sure what you mean ..."
   
   if database_name != "test.db":
-    myopener = MyOpener()
-    page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
-    page.read()
-    time.sleep(1)
-    response = page.geturl()
-    final = "Does this help? "+ response
+    try:
+      myopener = MyOpener()
+      page = myopener.open('http://google.com/search?btnI=1&q='+userSaid)
+      page.read()
+      time.sleep(1)
+      response = page.geturl()
+      final = "Does this help? "+ response
+    except IOError as e:
+      final = "I'm sorry but I think I'm not connected to the internet - my subconcious is telling me that '%s'" % e
   
   #pdb.set_trace()
   return final
@@ -160,12 +164,13 @@ def process(statement,database_name = DATABASE_NAME):
   s = parse(statement, relations=True, lemmata=True, light=True) 
   s = split(s)
 
-  result = search('There be DT NN+ (DT) (RB) (JJ) NNP+ (call) (DT) (RB) (JJ) (NNPS|NNP)+', s)
+  #result = search('There be DT NN+ (DT) (RB) (JJ) NNP+ (call) (DT) (RB) (JJ) (NNPS|NNP)+', s)
+  s, result = extract(statement)
   if result:
     #try:
       noun = search('(NN)+', s)[0].string
       table = pluralize(noun.replace(' ','_'))
-      result = search('(NNPS|NNP)+', s) # at the moment I'm unclear here about pulling in adjectives etc ...
+      result = search('(JJ|NNPS|NNP)+', s) # this pulls in adjectives, but there's supposed to be a better fix coming
       ident = result[0].string
       name = result[1].string if len(result) > 1 else ident
       #raise Exception(table+"; "+ident+"; "+name)
@@ -209,7 +214,7 @@ def processAction(statement,database_name = DATABASE_NAME):
     if result == None: 
       return "Sorry, I don't what happens when " + subj + " " + verb + " " + obj
     result = queryTable("reactions",{"origin":obj,"action":verb},database_name)
-    (table,thing) = findTableContainingEntityWithIdent(obj, database_name)
+    (table,thing) = findTableContainingEntityWithIdentOrName(obj, database_name)
   return thing[0] + " says " + result['name']
 
   
@@ -220,7 +225,7 @@ def processNewAspect(statement,database_name = DATABASE_NAME):
   if match:
     # need to search all tables
     ident = match.group(1)
-    (table,result) = findTableContainingEntityWithIdent(ident, database_name)
+    (table,result) = findTableContainingEntityWithIdentOrName(ident, database_name)
     if table == None: 
       return "Sorry, I don't know about " + ident
     new_column = match.group(2).lower()
@@ -240,7 +245,7 @@ if __name__ == "__main__":
   print greetings()
   while True:
     n = raw_input("> ")
-    if n == "quit":
+    if n in ["quit","exit","stop"]:
       break;
     print query(n)
   

@@ -2,7 +2,8 @@ from pattern.search import search, Pattern, Constraint
 from pattern.en import Sentence, parse
 #from patten.en.tree import Word
 
-MATCH_STRING = "There be DT {JJ? NN+} {NNP+} (call DT? {JJ? NNP+})"
+MATCH_STRING = "There be DT {JJ? NN+} {NNP+}"
+MATCH_STRING_EXT = "There be DT {JJ? NN+} {NNP+} call DT? {JJ? NNP+}"
 
 def extract(statement):
 
@@ -21,7 +22,9 @@ def extract(statement):
   s = find_entities(s)
    
    # not sure about this "be" thing - happy to match plural (is/are) but not sure about past tense ...
-  match = search(MATCH_STRING, s)
+  match = search(MATCH_STRING_EXT, s)
+  if not match:
+    match = search(MATCH_STRING, s)
   #raise Exception(match)
   return s, match
   

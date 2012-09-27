@@ -23,6 +23,8 @@ Note we now have some other chatbot related initiatives in the [faq](faq) and [w
 
 2. Apply patch to allow svm_predict to produce quiet output `cp svmutil.patch LIBSVM_HOME/python & cd LIBSVM_HOME/python & patch < svmutil.patch`
 
+[N.B. here's how I add libsvm to my PYTHONPATH: export PYTHONPATH="/Users/samueljoseph/Code/libsvm-3.12/python/:$PYTHONPATH"]
+
 3. Download TWSS source data into data directory in current project
 
 4. You can run some limited unit tests like so `python testTokeniseContents.py`

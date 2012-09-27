@@ -10,11 +10,11 @@ For development run [sniffer](http://pypi.python.org/pypi/sniffer) in the faq di
 
 Through the faqbot you can create new tables like so:
 
-> "There is a Course Probabilistic Graphical Models called PGM"
+> "There is a course Probabilistic Graphical Models called PGM"
 
 Which would create a table "courses" with columns "ident" and "name" and a single entry with ident "Probabilistic Graphical Models" and name "PGM".  Further entries can be added using similar statements:
 
-> "There is a Course Machine Learning called ML"
+> "There is a course Machine Learning called ML" <-- although at the moment the parser is not recognizing two letter acronyms ...
 
 Which will add another row to the same table, with the expected contents.  Additional columns can be added to table's like so:
 

@@ -18,6 +18,12 @@ def twss(sentence,vocabList,model):
     else:
         return random.choice(responses) +'\n'   
 
+def twss_lite(sentence,vocabList,model):
+    x = processSentence(sentence, vocabList)
+    p_label, p_acc, p_val = svm_predict([1], [x], model, '-b 1 -q')
+    return p_label[0]
+
+
 class Usage(Exception):
     def __init__(self, msg):
         self.msg = msg

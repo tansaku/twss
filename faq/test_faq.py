@@ -11,9 +11,13 @@ class TestFaq(unittest.TestCase):
          pass
     except IOError as e:
        None
+       # ideally we'd also be testing all this against a copy of the production database and then copy that back over to production if all tests pass
+
+       # "there is a game engine Scirra Construct called Construct" - need a log of all the statements/sayings and convert that to tests
        
   def checkEntity(self, table, ident, attributeValues, database):
     entity = grabEntity(table, ident, database)
+    self.assertIsNotNone(entity,("No entity of id '%s' in table '%s'"%(ident,table)))
     for key, value in attributeValues.items():
       self.assertEquals(entity[key],value)
       
@@ -32,6 +36,9 @@ class TestFaq(unittest.TestCase):
     self.sayAndCheckEntity("Unity3D has a type of 3D","OK","game_engines", "Unity3D", {"type":"3D"})
     self.sayAndCheck("What type of game engine is Unity3D?","The type for Unity3D is '3D'")
 
+    self.sayAndCheckEntity("There is a game engine Crysis", "OK", "game_engines", "Crysis", {"name":"Crysis","ident":"Crysis"})
+    self.sayAndCheckEntity("There is a game engine Source", "OK", "game_engines", "Source", {"name":"Source","ident":"Source"})
+    self.sayAndCheckEntity("Source has a URL of http://source.valvesoftware.com/sourcesdk/sourceu.php", "OK", "game_engines", "Source", {"url":"http://source.valvesoftware.com/sourcesdk/sourceu.php"})
     #Crysis - said no to use in an online class
     #Unity3d - http://www.studica.com/unity
     #Source http://source.valvesoftware.com/sourcesdk/sourceu.php
@@ -40,6 +47,10 @@ class TestFaq(unittest.TestCase):
     #Game Salad
     #Scirra
     #Torque 3d  
+    
+    # might make better progress if we worked to support phrases like
+    #"Unreal Engine is a game engine"
+    #"There is a game engine called Unreal Engine"
     
   def testActions(self):
     ''' test we can handle actions '''
@@ -110,7 +121,9 @@ class TestFaq(unittest.TestCase):
     # TODO self.sayAndCheck("do you know any games?","I know about The Graveyard")
     # this would require further work still?
 
-  
+  # NOTE, this way round doesn't really match how I have been doing the HPU courses ...
+  # where I put the acronym as the ident/id and the full name as the "name"
+  # really I want to be able to say something like "Probabilistic Graphical Models is a Coursera course, also called PGM"
   def testCreateCourseraCourses(self):
     self.sayAndCheckEntity("There is a course Probabilistic Graphical Models called PGM", "OK", "courses", "Probabilistic Graphical Models", {"name":"PGM","ident":"Probabilistic Graphical Models"})
     self.sayAndCheckEntity("There is a course Machine Learning called ML", "OK", "courses", "Machine Learning", {"name":"ML","ident":"Machine Learning"})
@@ -127,13 +140,13 @@ class TestFaq(unittest.TestCase):
     self.sayAndCheckEntity("There is a person Henry Garner called Henry", "OK", "people", "Henry Garner", {"name":"Henry","ident":"Henry Garner"})
     self.sayAndCheckEntity("Henry Garner has a favourite colour of red","OK","people", "Henry Garner", {"favourite_colour":"red"})
     self.sayAndCheckEntity("Henry Garner has a favourite colour of teal","OK","people", "Henry Garner", {"favourite_colour":"teal"})
-    self.sayAndCheck("do you know about Henry Garner?","All I know about Henry Garner is that his name is Henry, and his favourite colour is teal")
+    self.sayAndCheck("do you know about Henry Garner?","All I know about Henry is that his name is Henry, and his favourite colour is teal")
 
   def testCreateCTO(self):
     self.sayAndCheckEntity("There is a CTO Henry Garner called Henry", "OK", "CTOs", "Henry Garner", {"name":"Henry","ident":"Henry Garner"})
     self.sayAndCheckEntity("Henry Garner has a favourite colour of red","OK","CTOs", "Henry Garner", {"favourite_colour":"red"})
     self.sayAndCheckEntity("Henry Garner has a favourite colour of teal","OK","CTOs", "Henry Garner", {"favourite_colour":"teal"})
-    self.sayAndCheck("do you know about Henry Garner?","All I know about Henry Garner is that its name is Henry, and its favourite colour is teal")
+    self.sayAndCheck("do you know about Henry Garner?","All I know about Henry is that its name is Henry, and its favourite colour is teal")
 
   def testCreation(self):
     ''' test we can create and modify arbitrary entities '''
@@ -146,4 +159,4 @@ class TestFaq(unittest.TestCase):
     ''' test we can create and modify arbitrary entities '''
     self.sayAndCheckEntity("There is a professor Sam Joseph called Sam","OK", "professors", "Sam Joseph", {"name":"Sam","ident":"Sam Joseph"})
     self.sayAndCheckEntity("Sam Joseph has a birth date of May 13th 1972","OK", "professors", "Sam Joseph", {"name":"Sam","ident":"Sam Joseph",'birth_date':"May 13th 1972"})
-    self.sayAndCheck("What's Sam Joseph's birth date?","The birth date for Sam Joseph is 'May 13th 1972'")
+    self.sayAndCheck("What's Sam Joseph's birth date?","The birth date for Sam is 'May 13th 1972'")

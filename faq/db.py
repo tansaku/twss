@@ -42,7 +42,7 @@ def addEntity(name, hashtable, database_name):
   # We can also close the cursor if we are done with it
   c.close()
   
-def findTableContainingEntityWithIdent(ident, database_name,flag=False):
+def findTableContainingEntityWithIdentOrName(ident, database_name,flag=False):
   conn = sqlite3.connect(database_name)
   c = conn.cursor()
   c.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
@@ -50,7 +50,7 @@ def findTableContainingEntityWithIdent(ident, database_name,flag=False):
   #if flag: raise Exception(database_name)
   for result in results:
     result = result[0]
-    sql = "SELECT * FROM %s WHERE ident = '%s'" % (result,ident)
+    sql = "SELECT * FROM %s WHERE ident = '%s' OR name = '%s'" % (result,ident,ident)
     # TODO would like case insensitive match here - not sure how to do that in sqlite
     #raise Exception(sql)
     #if flag:
@@ -112,7 +112,8 @@ def updateEntity(table, hashtable ,database_name):
   c = conn.cursor()
   table = scrub(table)
   update = ', '.join([key.replace(' ','_')+" = '"+value+"'" for (key,value) in hashtable.items()])
-  sql = "UPDATE %s SET %s WHERE ident = '%s'" % (table,update,hashtable["ident"])
+  # TODO should search that thing we are trying to update exists, or else we effectively fail silently ...
+  sql = "UPDATE %s SET %s WHERE ident = '%s' OR name = '%s'" % (table,update,hashtable["ident"],hashtable["ident"])
   #raise Exception(sql)
   c.execute(sql)
   c.close()
