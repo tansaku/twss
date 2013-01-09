@@ -11,9 +11,17 @@ class TestFaq(unittest.TestCase):
          pass
     except IOError as e:
        None
-       # ideally we'd also be testing all this against a copy of the production database and then copy that back over to production if all tests pass
+       # ideally we'd also be testing all this against a copy of the production database 
+       # and then copy that back over to production if all tests pass
 
-       # "there is a game engine Scirra Construct called Construct" - need a log of all the statements/sayings and convert that to tests
+       # "there is a game engine Scirra Construct called Construct" - need a log of all 
+       # the statements/sayings and convert that to tests
+
+       # could have classifier generate log format that we would all test against
+
+       # wondering if everything should just be stored in json ...
+       # what I really want is the chat interface to also be the thing that I can use to structure and generate tests ...
+       # what you should have said was ""
        
   def checkEntity(self, table, ident, attributeValues, database):
     entity = grabEntity(table, ident, database)
