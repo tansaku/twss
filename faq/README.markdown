@@ -1,6 +1,14 @@
 The faqbot is currently separate from the TWSS system, and provides a Natural Language interface to a SQL database
 
-You'll need [nltk](https://github.com/nltk/nltk) and [pattern](http://www.clips.ua.ac.be/pages/pattern) on your PYTHONPATH to run
+You'll need [nltk](https://github.com/nltk/nltk) and [pattern](http://www.clips.ua.ac.be/pages/pattern) on your PYTHONPATH to run, or you go via easy_install and then pip:
+
+`sh setuptools-0.6c11-py2.7.egg 
+easy_install pip
+pip install -U pyyaml nltk
+pip install pattern
+` 
+
+and you'll also need to install the nltk corpora - instructions should pop up as necessary
 
 To run from the command line:
 
